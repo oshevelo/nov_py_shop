@@ -13,7 +13,7 @@ class Product(models.Model):
     stock = models.IntegerField(default=0)
     is_available = models.BooleanField(default=False)
 
-    # image = models.ImageField()
+    image = models.ImageField(upload_to='images/', blank=True, null=True)
 
     # category = models.ForeignKey(Category)
 
