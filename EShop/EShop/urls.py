@@ -1,11 +1,11 @@
 from django.contrib import admin
-from django.urls import include, path
+from django.urls import path, include
 
 urlpatterns = [
     path('jet/', include('jet.urls', 'jet')),
     path('jet/dashboard/', include('jet.dashboard.urls', 'jet-dashboard')),
 
     path('admin/', admin.site.urls),
-
+    path('auth/', include('apps.authenticate.urls')),
     path('products/', include('apps.products.urls'))
 ]
