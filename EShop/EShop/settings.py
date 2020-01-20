@@ -85,21 +85,12 @@ WSGI_APPLICATION = 'EShop.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-<<<<<<< HEAD
-        'NAME': '',
-        'USER': '',
-        'PASSWORD': '',
-        'HOST': '',
-        'PORT': 0,
-    },
-=======
         'NAME': 'eshop',
         'USER': '',
         'PASSWORD': '',
         'HOST': 'localhost',
         'PORT': 5432,
     }
->>>>>>> abe05ca6719bac4f899e490596516a02fa48d9e4
 }
 
 
@@ -144,8 +135,4 @@ STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-<<<<<<< HEAD
-from . local import *
-=======
 from .local import *
->>>>>>> abe05ca6719bac4f899e490596516a02fa48d9e4
