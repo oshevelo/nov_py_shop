@@ -11,10 +11,12 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 
 import os
+import sys
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+#sys.path.insert(0, os.path.join('BASE_DIR', 'apps'))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
@@ -41,6 +43,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'apps.products',
+    'apps.authenticate',
+    'apps.carts',
+    'apps.users'
 ]
 
 MIDDLEWARE = [
@@ -80,12 +85,21 @@ WSGI_APPLICATION = 'EShop.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+<<<<<<< HEAD
         'NAME': '',
         'USER': '',
         'PASSWORD': '',
         'HOST': '',
         'PORT': 0,
     },
+=======
+        'NAME': 'eshop',
+        'USER': '',
+        'PASSWORD': '',
+        'HOST': 'localhost',
+        'PORT': 5432,
+    }
+>>>>>>> abe05ca6719bac4f899e490596516a02fa48d9e4
 }
 
 
@@ -124,11 +138,14 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
+LOGIN_REDIRECT_URL = '/auth/'
 
 STATIC_URL = '/static/'
-
 MEDIA_URL = '/media/'
-
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
+<<<<<<< HEAD
 from . local import *
+=======
+from .local import *
+>>>>>>> abe05ca6719bac4f899e490596516a02fa48d9e4

@@ -1,4 +1,4 @@
-Django==2.2.0
+Django==2.2.4
 django-jet==1.0.8
 djangorestframework==3.10.3
 psycopg2==2.8.4
