@@ -15,6 +15,9 @@ class UserProfile(models.Model):
         related_name='profile',
     )
 
+    def __str__(self):
+        return f'{self.pk}. {self.surname} {self.first_name}'
+
 
 class UserAddress(models.Model):
     user = models.ForeignKey(
@@ -24,6 +27,9 @@ class UserAddress(models.Model):
     city = models.CharField(max_length=50)
     address = models.CharField(max_length=100)
 
+    def __str__(self):
+        return f'{self.pk}. {self.address}, {self.city} - {self.user}'
+
 
 class UserPhone(models.Model):
     user = models.ForeignKey(
@@ -31,3 +37,6 @@ class UserPhone(models.Model):
         on_delete=models.CASCADE,
     )
     phone = PhoneField(help_text='Contact phone number')
+
+    def __str__(self):
+        return f'{self.pk}. {self.phone} - {self.user}'
