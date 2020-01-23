@@ -14,4 +14,7 @@ class Shipments(models.Model):
     destination_adress_building = models.CharField(max_length=5)
     destination_other_details = models.CharField(max_length=500, blank=True)
 
+    def __str__(self):
+        return '{} - {}'.format(self.id, self.shipment_tracking_number)
+
 

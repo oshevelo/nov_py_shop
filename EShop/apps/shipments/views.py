@@ -1,6 +1,3 @@
-from django.http import HttpResponse
-from apps.shipments.models import Shipments
-
 from rest_framework import generics
 from rest_framework.pagination import LimitOffsetPagination
 from .models import Shipments
