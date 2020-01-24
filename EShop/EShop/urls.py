@@ -7,5 +7,6 @@ urlpatterns = [
 
     path('admin/', admin.site.urls),
     path('auth/', include('apps.authenticate.urls')),
-    path('products/', include('apps.products.urls'))
+    path('products/', include('apps.products.urls')),
+    path('users/', include('apps.users.urls')),
 ]

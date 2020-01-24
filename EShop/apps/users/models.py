@@ -24,8 +24,8 @@ class UserAddress(models.Model):
         UserProfile,
         on_delete=models.CASCADE,
     )
-    city = models.CharField(max_length=50)
-    address = models.CharField(max_length=100)
+    city = models.CharField(max_length=100)
+    address = models.CharField(max_length=250)
 
     def __str__(self):
         return f'{self.pk}. {self.address}, {self.city} - {self.user}'
