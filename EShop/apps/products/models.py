@@ -7,8 +7,8 @@ class Product(models.Model):
 
     price = models.FloatField(default=0)
 
-    scu = models.CharField(max_length=32) # Stock Keeping Unit, SCU
-    gtin = models.CharField(max_length=14)  # Global Trade Item Number, GTIN
+    scu = models.CharField(max_length=32, help_text='SCU: Stock Keeping Unit')
+    gtin = models.CharField(max_length=14, help_text='GTIN: Global Trade Item Number')
 
     stock = models.IntegerField(default=0)
     is_available = models.BooleanField(default=False)
@@ -16,6 +16,18 @@ class Product(models.Model):
     image = models.ImageField(upload_to='images/', blank=True, null=True)
 
     # category = models.ForeignKey(Category)
+
+    def __str__(self):
+        return '{} {}'.format(self.id, self.name)
+
+
+class Set(models.Model):
+    name = models.CharField(max_length=128, blank=False)
+    description = models.TextField(blank=True)
+
+    products = models.ManyToManyField(Product)
+
+    price = models.FloatField(default=0)
 
     def __str__(self):
         return '{} {}'.format(self.id, self.name)
