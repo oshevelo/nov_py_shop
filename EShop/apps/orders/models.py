@@ -1,15 +1,18 @@
+import uuid
 from django.db import models
-from apps.users.models import UserProfile
+from django.contrib.auth.models import User
 from apps.products.models import Product
 
 class Order(models.Model):
     
-    user_profile= models.ForeignKey(
-        UserProfile,
+    order_uuid=models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    
+    user= models.ForeignKey(
+        User,
         on_delete=models.CASCADE,
         related_name='orders',
     )
-   
+    
     accepting_time = models.DateTimeField('Accepting time')
     
     completing_or_rejecting_time = models.DateTimeField('Completing or rejecting time', blank=True, null=True)
@@ -28,7 +31,7 @@ class Order(models.Model):
     comment= models.TextField(max_length=500, blank=True)
     
     def __str__(self):
-        return 'Order #{} for {}'.format(self.pk, self.user_profile)
+        return 'Order {} for {}'.format(self.order_uuid, self.user)
         
         
 class OrderItem(models.Model):
