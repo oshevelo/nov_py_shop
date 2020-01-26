@@ -1,6 +1,9 @@
 from django.contrib import admin
-from .models import Shipments
+from .models import Shipment
 
 # Register your models here.
 
-admin.site.register(Shipments)
+class ShipmentAdmin(admin.ModelAdmin):
+    raw_id_fields = ("order")
+
+admin.site.register(Shipment)
