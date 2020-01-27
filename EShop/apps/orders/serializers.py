@@ -13,7 +13,7 @@ class OrderBriefSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Order
-        fields = ['order_uuid', 'user', 'accepting_time', 'status']
+        fields = ['id', 'order_uuid', 'user', 'accepting_time', 'status']
 
 
 class OrderItemSerializer(serializers.ModelSerializer):
