@@ -6,17 +6,18 @@ from apps.users.serializers import UserProfileSerializer, UserAddressSerializer,
 
 # Create your views here.
 
-class UserList(generics.ListCreateAPIView):
+
+class UserProfileList(generics.ListCreateAPIView):
     queryset = UserProfile.objects.all()
     serializer_class = UserProfileSerializer
     pagination_class = LimitOffsetPagination
 
 
-class UserDetail(generics.RetrieveUpdateDestroyAPIView):
+class UserProfileDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = UserProfileSerializer
 
     def get_object(self):
-        obj = get_object_or_404(UserProfile, pk=self.kwargs.get('user_id'))
+        obj = get_object_or_404(UserProfile, pk=self.kwargs.get('user_profile_id'))
         return obj
 
 

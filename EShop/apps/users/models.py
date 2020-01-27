@@ -23,6 +23,7 @@ class UserAddress(models.Model):
     user = models.ForeignKey(
         UserProfile,
         on_delete=models.CASCADE,
+        related_name='addresses',
     )
     city = models.CharField(max_length=100)
     address = models.CharField(max_length=250)
@@ -35,6 +36,7 @@ class UserPhone(models.Model):
     user = models.ForeignKey(
         UserProfile,
         on_delete=models.CASCADE,
+        related_name='phones',
     )
     phone = PhoneField(help_text='Contact phone number')
 
