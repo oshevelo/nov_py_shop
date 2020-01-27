@@ -21,7 +21,7 @@ class Product(models.Model):
         return '{} {}'.format(self.id, self.name)
 
 
-class Set(models.Model):
+class Kit(models.Model):
     name = models.CharField(max_length=128, blank=False)
     description = models.TextField(blank=True)
 
