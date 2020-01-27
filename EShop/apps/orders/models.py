@@ -31,7 +31,7 @@ class Order(models.Model):
     comment= models.TextField(max_length=500, blank=True)
     
     def __str__(self):
-        return 'Order {} for {}'.format(self.order_uuid, self.user)
+        return 'Order#{}  {} for {}'.format(self.id, self.order_uuid, self.user)
         
         
 class OrderItem(models.Model):
