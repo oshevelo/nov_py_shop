@@ -38,8 +38,8 @@ class UserAddressSerializer(serializers.ModelSerializer):
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
-    addresses = UserAddressSerializer(many=True)
-    phones = UserPhoneSerializer(many=True)
+    addresses = UserAddressBriefSerializer(many=True)
+    phones = UserPhoneBriefSerializer(many=True)
 
     class Meta:
         model = UserProfile
