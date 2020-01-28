@@ -9,7 +9,7 @@ class ProductAdmin(admin.ModelAdmin):
 
 class KitAdmin(admin.ModelAdmin):
     raw_id_fields = ('products',)
-    list_display = ('id', 'name', 'price')
+    list_display = ('id', 'name', 'discount')
 
 
 admin.site.register(Product, ProductAdmin)
