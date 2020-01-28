@@ -29,4 +29,4 @@ class KitDetail(generics.RetrieveDestroyAPIView):
     serializer_class = KitSerializer
 
     def get_object(self):
-        return get_object_or_404(Kit, pk=self.kwargs.get('set_id'))
+        return get_object_or_404(Kit, pk=self.kwargs.get('kit_id'))
