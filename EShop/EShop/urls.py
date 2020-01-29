@@ -10,4 +10,7 @@ urlpatterns = [
     path('auth/', include('apps.authenticate.urls')),
     path('products/', include('apps.products.urls')),
     path('shipments/', include('apps.shipments.urls'))
+    path('users/', include('apps.users.urls')),
+    path('carts/', include('apps.carts.urls')),
+    path('orders/', include('apps.orders.urls')),
 ]
