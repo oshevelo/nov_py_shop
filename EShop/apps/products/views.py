@@ -2,8 +2,8 @@ from django.shortcuts import get_object_or_404
 from rest_framework import generics
 from rest_framework.pagination import LimitOffsetPagination
 
-from .models import Product, Set
-from .serializers import ProductSerializer, SetSerializer
+from .models import Product, Kit
+from .serializers import ProductSerializer, KitSerializer
 
 
 class ProductsList(generics.ListCreateAPIView):
@@ -19,14 +19,14 @@ class ProductDetail(generics.RetrieveDestroyAPIView):
         return get_object_or_404(Product, pk=self.kwargs.get('product_id'))
 
 
-class SetsList(generics.ListCreateAPIView):
-    queryset = Set.objects.all()
-    serializer_class = SetSerializer
+class KitsList(generics.ListCreateAPIView):
+    queryset = Kit.objects.all()
+    serializer_class = KitSerializer
     pagination_class = LimitOffsetPagination
 
 
-class SetDetail(generics.RetrieveDestroyAPIView):
-    serializer_class = SetSerializer
+class KitDetail(generics.RetrieveDestroyAPIView):
+    serializer_class = KitSerializer
 
     def get_object(self):
-        return get_object_or_404(Set, pk=self.kwargs.get('set_id'))
+        return get_object_or_404(Kit, pk=self.kwargs.get('kit_id'))
