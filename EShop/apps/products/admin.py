@@ -1,11 +1,16 @@
 from django.contrib import admin
-from .models import Product, Set
+from .models import Product, Kit
 
 
-admin.site.register(
-    Product,
-    list_display=('id', 'name', 'price', 'scu', 'gtin', 'stock', 'is_available'),
-    list_filter=('is_available',)
-)
+class ProductAdmin(admin.ModelAdmin):
+    list_display = ('id', 'name', 'price', 'scu', 'gtin', 'stock', 'is_available')
+    list_filter = ('is_available',)
 
-admin.site.register(Set, list_display=('id', 'name', 'price'))
+
+class KitAdmin(admin.ModelAdmin):
+    raw_id_fields = ('products',)
+    list_display = ('id', 'name', 'discount')
+
+
+admin.site.register(Product, ProductAdmin)
+admin.site.register(Kit, KitAdmin)
