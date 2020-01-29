@@ -42,7 +42,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
     'rest_framework',
     'phone_field',
 
@@ -50,6 +49,7 @@ INSTALLED_APPS = [
     'apps.authenticate',
     'apps.carts',
     'apps.users',
+    'apps.shipments'
     'apps.orders',
 ]
 
