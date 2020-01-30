@@ -35,7 +35,6 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'jet.dashboard',
     'jet',
-
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -44,12 +43,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'phone_field',
-
     'apps.products',
     'apps.authenticate',
     'apps.carts',
     'apps.users',
-    'apps.shipments'
+    'apps.shipments',
     'apps.orders',
 ]
 
