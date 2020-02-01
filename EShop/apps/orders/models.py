@@ -35,6 +35,8 @@ class Order(models.Model):
         
         
 class OrderItem(models.Model):
+
+    pub_id=models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     
     order = models.ForeignKey(
         Order, 
