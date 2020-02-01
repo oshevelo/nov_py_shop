@@ -6,14 +6,14 @@ class OrderSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Order
-        fields = ['id',  'order_uuid', 'user', 'accepting_time', 'completing_or_rejecting_time', 'status', 'comment']
+        fields = ['id',  'pub_id', 'user', 'accepting_time', 'completing_or_rejecting_time', 'status', 'comment']
 
 
 class OrderBriefSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Order
-        fields = ['id', 'order_uuid', 'user', 'accepting_time', 'status']
+        fields = ['id', 'pub_id', 'user', 'accepting_time', 'status']
 
 
 class OrderItemSerializer(serializers.ModelSerializer):
