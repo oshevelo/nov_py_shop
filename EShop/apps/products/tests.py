@@ -6,7 +6,7 @@ from rest_framework import status
 
 class ProductsTestAPI(TestCase):
     def setUp(self):
-        print('hhh')
+       # print('hhh')
         p = Product.objects.create(name='testp', description='asd')
         self.c = APIClient()
 
@@ -23,4 +23,4 @@ class ProductsTestAPI(TestCase):
         c = APIClient()
         response = self.c.get('/products/?limit=3')
         self.assertEqual(response.status_code, 200)
-        print(response.json())
+        # print(response.json())
