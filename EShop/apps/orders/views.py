@@ -1,7 +1,7 @@
 from .models import Order, OrderItem
 from rest_framework import generics
 from rest_framework.pagination import LimitOffsetPagination
-from .serializers import OrderSerializer, OrderItemSerializer
+from .serializers import OrderSerializer, OrderItemSerializer, OrderItemBriefSerializer
 from django.shortcuts import get_object_or_404
 
 
@@ -21,12 +21,20 @@ class OrderDetail(generics.RetrieveUpdateDestroyAPIView):
 
 class OrderItemList(generics.ListCreateAPIView):
     queryset = OrderItem.objects.all()
-    serializer_class = OrderItemSerializer
     pagination_class = LimitOffsetPagination
+    
+    def get_serializer_class(self):
+        if self.request.method == 'POST':
+            return OrderItemBriefSerializer
+        return OrderItemSerializer
 
 
 class OrderItemDetail(generics.RetrieveUpdateDestroyAPIView):
-    serializer_class = OrderItemSerializer
+
+    def get_serializer_class(self):
+        if self.request.method == 'PUT':
+            return OrderItemBriefSerializer
+        return OrderItemSerializer
 
     def get_object(self):
         obj = get_object_or_404(OrderItem, pub_id=self.kwargs.get('orderitem_uuid'))
