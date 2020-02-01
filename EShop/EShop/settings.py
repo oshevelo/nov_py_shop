@@ -49,7 +49,7 @@ INSTALLED_APPS = [
     'apps.authenticate',
     'apps.carts',
     'apps.users',
-    'apps.shipments'
+    'apps.shipments',
     'apps.orders',
 ]
 
