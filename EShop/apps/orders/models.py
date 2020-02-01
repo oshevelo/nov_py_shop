@@ -31,7 +31,7 @@ class Order(models.Model):
     comment= models.TextField(max_length=500, blank=True)
     
     def __str__(self):
-        return 'Order#{}  {} for {}'.format(self.id, self.pub_id, self.user)
+        return 'Order#{}  ({}) for {}'.format(self.id, self.pub_id, self.user)
         
         
 class OrderItem(models.Model):
@@ -52,5 +52,5 @@ class OrderItem(models.Model):
     amount = models.IntegerField(default=1)
     
     def __str__(self):
-        return '{}, {}  - {} items'.format(self.order, self.product, self.amount)
+        return '{}: {}  - {} items'.format(self.order, self.product, self.amount)
         
