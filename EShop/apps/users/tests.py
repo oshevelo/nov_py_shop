@@ -164,7 +164,7 @@ class ProfileTest(TestCase):
         uu_id = response_json.get('uu_id')
         t.auto_uuid4_test(uu_id)
         expected = {'addresses': [],
-                    'uu_id': self.profile2.uu_id,
+                    'uu_id': str(self.profile2.uu_id),
                     'first_name': 'test2_upd',
                     'patronymic': 'testovich2',
                     'phones': [],
