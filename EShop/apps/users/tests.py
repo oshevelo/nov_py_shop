@@ -46,17 +46,28 @@ class ProfileTest(TestCase):
 
     def test_01_profile_create(self):
         response = self.api_client.post('/users/', {
-            'first_name': 'test',
+            'first_name': 'test123321!!',
             'surname': 'testov',
             'patronymic': 'testovich',
             'user': self.test_user4.pk,
         }, format='json')
+        #created_profile = UserProfile.objects.get(first_name='test123321!!')
+        #created_profile.pk
+        
         self.assertEqual(response.status_code, 201)
         response_json = response.json()
         uu_id = response_json.pop('uu_id')
         t = uuidTest()
         t.auto_uuid4_test(uu_id)
-        self.assertEqual(response_json, {'first_name': 'test',
+        '''
+        self.assertEqual(response_json, {'first_name': 'test123321!!',
+                                         'surname': 'testov',
+                                         'created_at': created_profile.created_at,
+                                         'created_at': response_json['created_at'],
+                                         'user': 4, 'addresses': [],
+                                         'phones': []})
+        '''
+        self.assertEqual(response_json, {'first_name': 'test123321!!',
                                          'surname': 'testov',
                                          'patronymic': 'testovich',
                                          'user': 4, 'addresses': [],
@@ -133,7 +144,7 @@ class ProfileTest(TestCase):
         expected = {'first_name': 'test2',
                     'surname': 'testov2',
                     'patronymic': 'testovich2',
-                    'user': 14,
+                    'user': self.profile2.user_id,
                     'addresses': [],
                     'phones': []}
         self.assertEqual(response_json, expected)
@@ -157,7 +168,7 @@ class ProfileTest(TestCase):
                     'patronymic': 'testovich2',
                     'phones': [],
                     'surname': 'testov2',
-                    'user': 22}
+                    'user': self.profile2.user_id}
         self.assertEqual(response_json, expected)
 
     def test_07_profile_destroy(self):
