@@ -17,7 +17,7 @@ class CartDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = CartSerializer
 
     def get_object(self):
-        obj = get_object_or_404(Cart, cart_uuid=self.kwargs.get('cart_uuid'))
+        obj = get_object_or_404(Cart, public_id=self.kwargs.get('cart_uuid'))
         return obj
 
 
@@ -31,6 +31,6 @@ class CartItemDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = CartItemSerializer
 
     def get_object(self):
-        obj = get_object_or_404(CartItem, pk=self.kwargs.get('cart_item_id'))
+        obj = get_object_or_404(CartItem, public_id=self.kwargs.get('cart_item_uuid'))
         return obj
 

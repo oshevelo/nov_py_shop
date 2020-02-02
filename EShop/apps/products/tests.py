@@ -1,8 +1,4 @@
 from django.test import TestCase
-from rest_framework.test import APIClient
-from apps.products.models import Product
-from rest_framework import status
-
 
 class ProductsTestAPI(TestCase):
     def setUp(self):
