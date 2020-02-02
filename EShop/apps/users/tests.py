@@ -161,9 +161,10 @@ class ProfileTest(TestCase):
         self.assertEqual(response.status_code, 200)
         response_json = response.json()
         t = uuidTest()
-        uu_id = response_json.pop('uu_id')
+        uu_id = response_json.get('uu_id')
         t.auto_uuid4_test(uu_id)
         expected = {'addresses': [],
+                    'uu_id': self.profile2.uu_id,
                     'first_name': 'test2_upd',
                     'patronymic': 'testovich2',
                     'phones': [],
