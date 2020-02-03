@@ -44,36 +44,27 @@ class ProfileTest(TestCase):
         UserAddress.objects.create(
             address='second address', city='second city', user_profile=self.profile1)
 
-    def test_01_profile_create(self):
+    def test_profile_create(self):
         response = self.api_client.post('/users/', {
-            'first_name': 'test123321!!',
+            'first_name': 'test_isd87yuh',
             'surname': 'testov',
             'patronymic': 'testovich',
             'user': self.test_user4.pk,
         }, format='json')
-        #created_profile = UserProfile.objects.get(first_name='test123321!!')
-        #created_profile.pk
-        
+        created_profile = UserProfile.objects.get(first_name='test_isd87yuh')
         self.assertEqual(response.status_code, 201)
         response_json = response.json()
         uu_id = response_json.pop('uu_id')
         t = uuidTest()
         t.auto_uuid4_test(uu_id)
-        '''
-        self.assertEqual(response_json, {'first_name': 'test123321!!',
-                                         'surname': 'testov',
-                                         'created_at': created_profile.created_at,
-                                         'created_at': response_json['created_at'],
-                                         'user': 4, 'addresses': [],
-                                         'phones': []})
-        '''
-        self.assertEqual(response_json, {'first_name': 'test123321!!',
+        self.assertEqual(response_json, {'first_name': 'test_isd87yuh',
                                          'surname': 'testov',
                                          'patronymic': 'testovich',
-                                         'user': 4, 'addresses': [],
+                                         'user': created_profile.pk,
+                                         'addresses': [],
                                          'phones': []})
 
-    def test_02_profile_list(self):
+    def test_profile_list(self):
         response = self.api_client.get('/users/')
         self.assertEqual(response.status_code, 200)
         response_json = response.json()
@@ -87,28 +78,31 @@ class ProfileTest(TestCase):
             for phone in user_profile['phones']:
                 uu_id = phone.pop('uu_id')
                 t.auto_uuid4_test(uu_id)
+        pk1 = UserProfile.objects.get(first_name='test1').pk
+        pk2 = UserProfile.objects.get(first_name='test2').pk
+        pk3 = UserProfile.objects.get(first_name='test3').pk
         expected = [{'addresses': [{'address': 'first address', 'city': 'first city'},
                                    {'address': 'second address', 'city': 'second city'}],
                      'first_name': 'test1',
                      'patronymic': 'testovich1',
                      'phones': [{'phone': '1111'}, {'phone': '2222'}],
                      'surname': 'testov1',
-                     'user': 5},
+                     'user': pk1},
                     {'addresses': [],
                      'first_name': 'test2',
                      'patronymic': 'testovich2',
                      'phones': [],
                      'surname': 'testov2',
-                     'user': 6},
+                     'user': pk2},
                     {'addresses': [],
                      'first_name': 'test3',
                      'patronymic': 'testovich3',
                      'phones': [],
                      'surname': 'testov3',
-                     'user': 7}]
+                     'user': pk3}]
         self.assertEqual(response_json, expected)
 
-    def test_03_profile_list_limit_offset(self):
+    def test_profile_list_limit_offset(self):
         response = self.api_client.get('/users/?limit=2&offset=1')
         self.assertEqual(response.status_code, 200)
         response_json = response.json()
@@ -116,6 +110,8 @@ class ProfileTest(TestCase):
         for user_profile in response_json['results']:
             uu_id = user_profile.pop('uu_id')
             t.auto_uuid4_test(uu_id)
+        pk2 = UserProfile.objects.get(first_name='test2').pk
+        pk3 = UserProfile.objects.get(first_name='test3').pk
         expected = {'count': 3,
                     'next': None,
                     'previous': 'http://testserver/users/?limit=2',
@@ -124,16 +120,16 @@ class ProfileTest(TestCase):
                                  'patronymic': 'testovich2',
                                  'phones': [],
                                  'surname': 'testov2',
-                                 'user': 10},
+                                 'user': pk2},
                                 {'addresses': [],
                                  'first_name': 'test3',
                                  'patronymic': 'testovich3',
                                  'phones': [],
                                  'surname': 'testov3',
-                                 'user': 11}]}
+                                 'user': pk3}]}
         self.assertEqual(response_json, expected)
 
-    def test_04_profile_retrieve_positive(self):
+    def test_profile_retrieve_positive(self):
         request_uuid = self.profile2.uu_id
         response = self.api_client.get(f'/users/{str(request_uuid)}/')
         self.assertEqual(response.status_code, 200)
@@ -149,12 +145,12 @@ class ProfileTest(TestCase):
                     'phones': []}
         self.assertEqual(response_json, expected)
 
-    def test_05_profile_retrieve_negative(self):
+    def test_profile_retrieve_negative(self):
         request_uuid = uuid.uuid4()
         response = self.api_client.get(f'/users/{str(request_uuid)}/')
         self.assertEqual(response.status_code, 404)
 
-    def test_06_profile_update(self):
+    def test_profile_update(self):
         request_uuid = self.profile2.uu_id
         response = self.api_client.patch(
             f'/users/{str(request_uuid)}/', {"first_name": "test2_upd"}, format='json')
@@ -172,9 +168,7 @@ class ProfileTest(TestCase):
                     'user': self.profile2.user_id}
         self.assertEqual(response_json, expected)
 
-    def test_07_profile_destroy(self):
+    def test_profile_destroy(self):
         request_uuid = self.profile2.uu_id
         response = self.api_client.delete(f'/users/{str(request_uuid)}/')
         self.assertEqual(response.status_code, 204)
-
-
