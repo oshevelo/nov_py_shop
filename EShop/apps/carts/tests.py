@@ -55,10 +55,3 @@ class CartsAndCartItemsTestAPI(TestCase):
         self.assertEqual(len(response.json()), 3)
         print(len(response.json()))
      
-
-
- 
- 
-
- 
-
