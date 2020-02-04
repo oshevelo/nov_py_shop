@@ -17,7 +17,8 @@ class UserProfileDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = UserProfileSerializer
 
     def get_object(self):
-        obj = get_object_or_404(UserProfile, pk=self.kwargs.get('user_profile_id'))
+        obj = get_object_or_404(
+            UserProfile, uu_id=self.kwargs.get('user_profile_uu_id'))
         return obj
 
 
@@ -32,7 +33,7 @@ class UserAddressDetail(generics.RetrieveUpdateDestroyAPIView):
 
     def get_object(self):
         obj = get_object_or_404(
-            UserAddress, pk=self.kwargs.get('user_address_id'))
+            UserAddress, uu_id=self.kwargs.get('user_address_uu_id'))
         return obj
 
 
@@ -46,5 +47,6 @@ class UserPhoneDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = UserPhoneSerializer
 
     def get_object(self):
-        obj = get_object_or_404(UserPhone, pk=self.kwargs.get('user_phone_id'))
+        obj = get_object_or_404(
+            UserPhone, uu_id=self.kwargs.get('user_phone_uu_id'))
         return obj

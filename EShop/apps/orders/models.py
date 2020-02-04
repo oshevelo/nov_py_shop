@@ -5,7 +5,7 @@ from apps.products.models import Product
 
 class Order(models.Model):
     
-    order_uuid=models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    pub_id=models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     
     user= models.ForeignKey(
         User,
@@ -31,10 +31,12 @@ class Order(models.Model):
     comment= models.TextField(max_length=500, blank=True)
     
     def __str__(self):
-        return 'Order#{}  {} for {}'.format(self.id, self.order_uuid, self.user)
+        return 'Order#{}  ({}) for {}'.format(self.id, self.pub_id, self.user)
         
         
 class OrderItem(models.Model):
+
+    pub_id=models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     
     order = models.ForeignKey(
         Order, 
@@ -50,5 +52,5 @@ class OrderItem(models.Model):
     amount = models.IntegerField(default=1)
     
     def __str__(self):
-        return '{}, {}  - {} items'.format(self.order, self.product, self.amount)
+        return '{}: {}  - {} items'.format(self.order, self.product, self.amount)
         
