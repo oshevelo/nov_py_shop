@@ -27,7 +27,7 @@ class Shipment(models.Model):
         (DELIVERED,'Delivered'),
     ]
 
-    shipment_tracking_number = models.IntegerField()
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False)
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
     shipment_status = models.IntegerField(choices=DELIVERY_STATUS_CHOICES, default=1)
     shipment_type = models.CharField(
