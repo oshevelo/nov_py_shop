@@ -1,7 +1,11 @@
 from django.urls import path
-from . import views
+from apps.authenticate.views import (
+		registration_view,
+
+	)
+
+app_name = "account"
 
 urlpatterns = [
-    path('', views.index, name = "index"),
-    path('register', views.register, name='register')
+    path('register', registration_view, name='register'),
 ]
