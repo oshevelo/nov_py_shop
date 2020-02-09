@@ -1,9 +1,11 @@
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
+from rest_framework import generics
 
+from django.contrib.auth.models import User
 from apps.authenticate.serializers import RegistrationSerializer
-
+'''
 @api_view(['POST',])
 def registration_view(request):
 	if request.method == 'POST':
@@ -17,3 +19,7 @@ def registration_view(request):
 		else:
 			data = serializer.errors
 		return Response(data)
+'''
+class UserList(generics.ListCreateAPIView):
+	queryset = User.objects.all()
+	serializer_class = RegistrationSerializer
