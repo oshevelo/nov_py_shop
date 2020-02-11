@@ -7,7 +7,7 @@ class CartBriefSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Cart
-        fields = ('public_id', 'updated_at')
+        fields = ('public_id', 'user')
 
 
 class CartItemBriefSerializer(serializers.ModelSerializer):
@@ -21,17 +21,17 @@ class CartItemBriefSerializer(serializers.ModelSerializer):
 
 class CartSerializer(serializers.ModelSerializer):
 
-    items = CartItemBriefSerializer(many=True)
+    items = CartItemBriefSerializer(many=True,read_only=True)
 
     class Meta:
         model = Cart
-        fields = ('public_id', 'user', 'created_at', 'updated_at', 'items')
+        fields = ('id','public_id', 'user', 'created_at', 'updated_at', 'items')
 
 
 class CartItemSerializer(serializers.ModelSerializer):
 
     product = ProductBriefSerializer(read_only=True)
-    cart = CartBriefSerializer()
+#    cart = CartBriefSerializer(read_only=True)
 
     class Meta:
         model = CartItem
