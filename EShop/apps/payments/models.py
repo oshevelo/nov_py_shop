@@ -14,4 +14,4 @@ class Payment(models.Model):
     date = models.DateTimeField(default=timezone.now, null=True, blank=False)
 
     def __str__(self):
-        return 'user = {}, id = {}, date = {}'.format(self.user, self.id, self.date, self.pk)
+        return 'user = {}, public_id = {}, date = {}'.format(self.user, self.id, self.date, self.pk)
