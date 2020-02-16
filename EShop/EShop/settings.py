@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'rest_framework',
+
     'phone_field',
     'apps.products',
     'apps.authenticate',
@@ -52,6 +53,11 @@ INSTALLED_APPS = [
     'apps.orders',
     'apps.payments',
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': ('rest_framework.permissions.IsAdminUser',),
+    'PAGINATE_BY': 10
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -134,7 +140,7 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
-LOGIN_REDIRECT_URL = '/auth/'
+LOGIN_REDIRECT_URL = '/authenticate/'
 
 STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
