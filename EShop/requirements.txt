@@ -4,3 +4,4 @@ djangorestframework==3.10.3
 psycopg2-binary==2.8.4
 Pillow==7.0.0
 django-phone-field==1.8.0
+rest_registration==0.5.3
