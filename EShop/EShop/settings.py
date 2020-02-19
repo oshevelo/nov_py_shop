@@ -56,10 +56,13 @@ INSTALLED_APPS = [
     'apps.payments',
 ]
 
+'''
 REST_FRAMEWORK = {
-    #'DEFAULT_PERMISSION_CLASSES': ('rest_framework.permissions.IsAdminUser',),
+    'DEFAULT_PERMISSION_CLASSES': ('rest_framework.permissions.IsAdminUser',),
+
     'PAGINATE_BY': 10
 }
+'''
 
 REST_REGISTRATION = {
     'REGISTER_VERIFICATION_ENABLED': False,
