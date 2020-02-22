@@ -39,6 +39,13 @@ class Order(models.Model):
             return True
         else:
             return False
+            
+    @property
+    def max_orderitems(self):
+        if len(self.orderitems.all())<3:
+            return False
+        else:
+            return True
     
     def __str__(self):
         return 'Order#{}  ({}) for {}'.format(self.id, self.pub_id, self.user)
