@@ -51,6 +51,8 @@ INSTALLED_APPS = [
     'apps.shipments',
     'apps.orders',
     'apps.catalogue',
+    'mptt',
+    'rest_framework_recursive',
     'apps.payments',
 ]
 
