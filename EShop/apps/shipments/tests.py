@@ -30,11 +30,11 @@ class shipmentsTest(TestCase):
         }, format='json')
         print(response)
         self.assertEqual(response.status_code, 201)
-"""
+
     def test_shipment_list(self):
         response = self.sh.get('/shipments/')
         self.assertEqual(response.status_code, 200)
-
+"""
     def test_shipment_list_paged(self):
         response = self.sh.get('/shipments/?limit=2')
         self.assertEqual(response.status_code, 200)
