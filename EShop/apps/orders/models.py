@@ -20,7 +20,8 @@ class Order(models.Model):
     status_choices=[
         ('accepted','accepted'),
         ('completed','completed'),
-        ('rejected','rejected')
+        ('rejected','rejected'),
+        ('cancelled','cancelled')
     ]
     status=models.CharField(
         max_length = 20,
@@ -28,7 +29,23 @@ class Order(models.Model):
         default='accepted'
     )
     
+    is_paid=models.BooleanField(default=False)
+    
     comment= models.TextField(max_length=500, blank=True)
+    
+    @property
+    def is_editable(self):
+        if self.status=='accepted' and self.is_paid==False:
+            return True
+        else:
+            return False
+            
+    @property
+    def max_orderitems(self):
+        if len(self.orderitems.all())<3:
+            return False
+        else:
+            return True
     
     def __str__(self):
         return 'Order#{}  ({}) for {}'.format(self.id, self.pub_id, self.user)
