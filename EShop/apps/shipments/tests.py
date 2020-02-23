@@ -22,13 +22,13 @@ class shipmentsTest(TestCase):
         print(self.order_1, self.order_1.pk)
         print(" ")    
         response=self.sh.post('/shipments/', {
-            'order': self.order_1.pk, 
-            'destination city': ' test',
-            'destination zip code': '11111',
-            'destination adres street': 'test',
-            'destination adres building': '1t'
+            'order_id': self.order_1.pk, 
+            'destination_city': ' test',
+            'destination_zip_code': '11111',
+            'destination_adress_street': 'test',
+            'destination_adress_building': '1t'
         }, format='json')
-        print(response)
+        print(response.json())
         self.assertEqual(response.status_code, 201)
 
     def test_shipment_list(self):
