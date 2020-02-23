@@ -59,16 +59,11 @@ INSTALLED_APPS = [
 '''
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': ('rest_framework.permissions.IsAdminUser',),
-
+    
     'PAGINATE_BY': 10
 }
 '''
 
-REST_REGISTRATION = {
-    'REGISTER_VERIFICATION_ENABLED': False,
-    'RESET_PASSWORD_VERIFICATION_ENABLED': False,
-    'REGISTER_EMAIL_VERIFICATION_ENABLED': False,
-}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
