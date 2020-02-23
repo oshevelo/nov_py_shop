@@ -25,16 +25,20 @@ class UserPhoneBriefSerializer(serializers.ModelSerializer):
 
 class UserPhoneSerializer(serializers.ModelSerializer):
 
+    profile = UserProfileBriefSerializer(read_only=True)
+
     class Meta:
         model = UserPhone
-        fields = ('uu_id', 'phone', 'user_profile')
+        fields = ('uu_id', 'phone', 'profile')
 
 
 class UserAddressSerializer(serializers.ModelSerializer):
 
+    profile = UserProfileBriefSerializer(read_only=True)
+
     class Meta:
         model = UserAddress
-        fields = ('uu_id', 'city', 'address', 'user_profile')
+        fields = ('uu_id', 'city', 'address', 'profile')
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
@@ -44,4 +48,4 @@ class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserProfile
         fields = ('uu_id', 'first_name', 'surname',
-                  'patronymic', 'user', 'addresses', 'phones')
+                  'patronymic', 'addresses', 'phones')
