@@ -14,7 +14,3 @@ urlpatterns = [
     path('orders/', include('apps.orders.urls')),
     path('payments/', include('apps.payments.urls')),
 ]
-
-'''urlpatterns += patterns('',
-    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework'))
-)'''
