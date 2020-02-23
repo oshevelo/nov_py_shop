@@ -54,10 +54,15 @@ INSTALLED_APPS = [
     'apps.payments',
 ]
 
+
+
+'''
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': ('rest_framework.permissions.IsAdminUser',),
+    
     'PAGINATE_BY': 10
 }
+'''
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
