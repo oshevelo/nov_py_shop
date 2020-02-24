@@ -42,7 +42,7 @@ class Order(models.Model):
             
     @property
     def max_orderitems(self):
-        if len(self.orderitems.all())<3:
+        if len(self.orderitems.all())<5:
             return False
         else:
             return True
