@@ -1,3 +1,9 @@
 from django.contrib import admin
+from .models import Category
 
-# Register your models here.
+
+class CatalogueAdmin(admin.ModelAdmin):
+    raw_id_fields = ("category",)
+
+
+admin.site.register(Category)
