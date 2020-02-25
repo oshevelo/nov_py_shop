@@ -6,11 +6,16 @@ class ShipmentSerializer(serializers.ModelSerializer):
 
     order = OrderBriefSerializer(read_only=True)    
 
+
     class Meta:
         model = Shipment
-        fields = ['id', 'uuid', 'order_id', 'order', 'shipment_status', 'shipment_type', 'shipment_date', 'destination_city', 'destination_zip_code', 'destination_adress_street', 'destination_adress_building', 'destination_other_details'
+        fields = ['uuid', 'order', 'shipment_status', 'shipment_type', 'shipment_date', 'destination_city', 'destination_zip_code', 'destination_adress_street', 'destination_adress_building', 'destination_other_details'
                  ]
-
+        def perform_create(self, serializer):
+            order_data = json.pop['order']
+            json.update({'order': Order.objects.filter(id=order_data['id']).first()})
+            shipment = Shipment.objects.create(**json)
+            return shipment
     '''
         perform_create
             1) order_data = json.pop['order']

@@ -7,26 +7,21 @@ from django.utils.timezone import now
 import uuid
 
 class shipmentsTest(TestCase):
-    
+
     def setUp(self):
         self.sh=APIClient()
         self.user_1=User.objects.create(username="Test", password="Test")
         self.order_1 = Order.objects.create(user=self.user_1, accepting_time=now())
         self.shipment_1=Shipment.objects.create(order=self.order_1,destination_city="Testville", destination_zip_code = 1111, destination_adress_street="Test str", destination_adress_building="1a")
+        print(self.shipment_1.uuid)
 
-        """
-        Shipment tests
-        """
-
-    def test_shipment_create(self):
-        print(self.order_1, self.order_1.pk)
-        print(" ")    
-        response=self.sh.post('/shipments/', {
-            'order_id': self.order_1.pk, 
-            'destination_city': ' test',
-            'destination_zip_code': '11111',
-            'destination_adress_street': 'test',
-            'destination_adress_building': '1t'
+    def test_shipment_create(self):   
+        response=self.sh.post('/shipments/', 
+        {'order': self.order_1.id,
+         'destination_city': 'test',
+         'destination_zip_code': '11111',
+         'destination_adress_street': 'test',
+         'destination_adress_building': '1t',
         }, format='json')
         print(response.json())
         self.assertEqual(response.status_code, 201)
@@ -34,6 +29,16 @@ class shipmentsTest(TestCase):
     def test_shipment_list(self):
         response = self.sh.get('/shipments/')
         self.assertEqual(response.status_code, 200)
+
+    def test_shipments_retrieve(self):
+        uuid = self.shipment_1.uuid
+        response = self.sh.get('/shipments/{}/'.format(uuid))
+        self.assertEqual(response.status_code, 200)
+
+    def test_cart_retrieve_negative(self):
+        uuid = "1234"  #invalid uuid
+        response = self.sh.get('/shipments/{}/'.format(uuid))
+        self.assertEqual(response.status_code, 404)
 """
     def test_shipment_list_paged(self):
         response = self.sh.get('/shipments/?limit=2')
@@ -46,10 +51,7 @@ class shipmentsTest(TestCase):
         first_result = response.json()['results'][0]
         self.assertEqual(first_result['user'], self.user_1.pk)
 
-    def test_shipments_retrieve(self):
-        uuid = self.shipment_1.uuid
-        response = self.sh.get(f'/shipments/{uuid}/')
-        self.assertEqual(response.status_code, 200)
+    
 
     def test_cart_retrieve_negative(self):
         uuid = "1234"  #invalid uuid
