@@ -1,0 +1,5 @@
+Django==2.2.4
+djangorestframework==3.10.3
+django-jet==1.0.8
+redis==3.4.1
+celery==4.4.0
