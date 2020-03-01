@@ -4,7 +4,7 @@ from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.permissions import IsAuthenticated
 from .serializers import OrderSerializer, OrderItemSerializer, OrderCreateUpdateSerializer, OrderItemCreateUpdateSerializer
 from django.shortcuts import get_object_or_404
-from .permissions import OrderEditPermission, AddOrderItemPermission
+from .permissions import OrderEditPermission, AddOrderItemPermission, ReadOnlyMethod
 
 
 class OrderList(generics.ListCreateAPIView):
@@ -24,7 +24,7 @@ class OrderList(generics.ListCreateAPIView):
         
 
 class OrderDetail(generics.RetrieveUpdateDestroyAPIView):
-    permission_classes = [IsAuthenticated&OrderEditPermission]
+    permission_classes = [IsAuthenticated&(ReadOnlyMethod|OrderEditPermission)]
 
     def get_object(self):
         obj = get_object_or_404(Order, pub_id=self.kwargs.get('order_uuid'), user=self.request.user)
@@ -38,7 +38,7 @@ class OrderDetail(generics.RetrieveUpdateDestroyAPIView):
 
 class OrderItemList(generics.ListCreateAPIView):
     pagination_class = LimitOffsetPagination
-    permission_classes = [IsAuthenticated&OrderEditPermission&AddOrderItemPermission]
+    permission_classes = [IsAuthenticated&(ReadOnlyMethod|OrderEditPermission)&AddOrderItemPermission]
     
     def get_serializer_class(self):
         if self.request.method == 'POST':
@@ -55,7 +55,7 @@ class OrderItemList(generics.ListCreateAPIView):
 
 
 class OrderItemDetail(generics.RetrieveUpdateDestroyAPIView):
-    permission_classes = [IsAuthenticated&OrderEditPermission]
+    permission_classes = [IsAuthenticated&(ReadOnlyMethod|OrderEditPermission)]
 
     def get_serializer_class(self):
         if self.request.method == 'PUT':
