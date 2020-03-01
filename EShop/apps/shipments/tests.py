@@ -30,7 +30,7 @@ class shipmentsTest(TestCase):
         response = self.sh.get('/shipments/')
         self.assertEqual(response.status_code, 200)
 
-    def test_shipments_retrieve(self):
+    def test_shipment_retrieve(self):
         uuid = self.shipment_1.uuid
         response = self.sh.get('/shipments/{}'.format(uuid))
         self.assertEqual(response.status_code, 200)
@@ -39,13 +39,6 @@ class shipmentsTest(TestCase):
         uuid = "1234"  #invalid uuid
         response = self.sh.get('/shipments/{}'.format(uuid))
         self.assertEqual(response.status_code, 404)
-
-    def test_shipment_destroy(self):
-        uuid = self.shipment_1.uuid
-        response = self.sh.delete('/shipments/{}'.format(uuid))
-        self.assertEqual(response.status_code, 204)
-        updated_response = self.sh.delete('/shipments/{}/'.format(uuid))
-        self.assertEqual(updated_response.status_code, 404)
 
     def test_shipment_list_paged(self):
         response = self.sh.get('/shipments/?limit=2')
@@ -58,36 +51,24 @@ class shipmentsTest(TestCase):
         self.assertEqual(response.status_code, 204)
         updated_response = self.sh.delete('/shipments/{}'.format(uuid))
         self.assertEqual(updated_response.status_code, 404)
-    
-    def test_shipment_destroy(self):
+ 
+
+    def test_shipment_update(self):
         uuid = self.shipment_1.uuid
-        response = self.sh.delete('/shipments/{}'.format(uuid))
-        self.assertEqual(response.status_code, 204)
-        updated_response = self.sh.delete('/shipments/{}'.format(uuid))
-        self.assertEqual(updated_response.status_code, 404)  
+        new_destination_city = "Testopolis"
+        response = self.sh.patch('/shipments/{}'.format(uuid), 
+                                 {'destination_city': new_destination_city})
+        self.assertEqual(response.status_code, 200)
 
 
 """
-
-    def test_Shipment_list_limit_offset(self):
-        response = self.sh.get('/shipments/?limit=2&offset=1')
-        self.assertEqual(response.status_code, 200) 
-        first_result = response.json()['results'][0]
-        self.assertEqual(first_result['user'], self.user_1.pk)
-
 
     def test_shipment_update(self):
         uuid = self.shipment_1.uuid
         new_destination_city = "Testopolis"
         response = self.sh.patch(f'/shipments/{uuid}/', {'destination_city': new_destination_city})
         self.assertEqual(response.status_code, 200)
-
-    def test_shipment_destroy(self):
-        uuid = self.shipment_1.uuid
-        response = self.sh.delete(f'/shipments/{uuid}/')
-        self.assertEqual(response.status_code, 204)
-        updated_response = self.sh.delete(f'/shipments/{cart_uuid}/')
-        self.assertEqual(updated_response.status_code, 404)  
+ 
 """
 
     
