@@ -58,6 +58,13 @@ class shipmentsTest(TestCase):
         self.assertEqual(response.status_code, 204)
         updated_response = self.sh.delete('/shipments/{}'.format(uuid))
         self.assertEqual(updated_response.status_code, 404)
+    
+    def test_shipment_destroy(self):
+        uuid = self.shipment_1.uuid
+        response = self.sh.delete('/shipments/{}'.format(uuid))
+        self.assertEqual(response.status_code, 204)
+        updated_response = self.sh.delete('/shipments/{}'.format(uuid))
+        self.assertEqual(updated_response.status_code, 404)  
 
 
 """
