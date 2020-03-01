@@ -147,7 +147,6 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
-LOGIN_REDIRECT_URL = '/authenticate/'
 
 STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
