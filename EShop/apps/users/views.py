@@ -13,6 +13,7 @@ from apps.users.permissions import UserProfileEditPermission, RequestIsList
 class UserProfileList(generics.ListAPIView):
     serializer_class = UserProfileSerializer
     pagination_class = LimitOffsetPagination
+    permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
         return UserProfile.objects.filter(user=self.request.user)
@@ -20,6 +21,7 @@ class UserProfileList(generics.ListAPIView):
 
 class UserProfileDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = UserProfileSerializer
+    permission_classes = (IsAuthenticated,)
 
     def get_object(self):
         return get_object_or_404(
@@ -32,38 +34,22 @@ class UserAddressList(generics.ListCreateAPIView):
     serializer_class = UserAddressSerializer
     pagination_class = LimitOffsetPagination
     permission_classes = (
-        (RequestIsList & IsAuthenticated) |
-        (UserProfileEditPermission),
+        IsAuthenticated & (
+            RequestIsList | UserProfileEditPermission
+        ),
     )
 
     def get_queryset(self):
         return UserAddress.objects.filter(user_profile__user=self.request.user)
 
-    def create(request, *args, **kwargs):
-        profile = UserProfile.objects.get(
-            uu_id=kwargs['user_profile_uu_id'])
-        data = request.request.data
-        serializer = request.serializer_class(data=data)
-        if serializer.is_valid():
-            address = request.request.data['address']
-            city = request.request.data['city']
-            obj = UserAddress.objects.create(
-                city=city, address=address, user_profile=profile)
-            response_data = {
-                'address': obj.address,
-                'city': obj.city,
-                # 'uu_id': obj.serializable_value('uu_id'),
-            }
-            response_serializer = request.serializer_class(data=response_data)
-            if response_serializer.is_valid():
-                return Response(response_serializer.data,
-                                status=status.HTTP_201_CREATED)
-        return Response(response_serializer.errors,
-                        status=status.HTTP_400_BAD_REQUEST)
+    def perform_create(self, serializer, **kwargs):
+        profile = UserProfile.objects.get(user=self.request.user)
+        serializer.save(user_profile=profile)
 
 
 class UserAddressDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = UserAddressSerializer
+    permission_classes = (IsAuthenticated,)
 
     def get_object(self):
         return get_object_or_404(
@@ -76,37 +62,22 @@ class UserPhoneList(generics.ListCreateAPIView):
     serializer_class = UserPhoneSerializer
     pagination_class = LimitOffsetPagination
     permission_classes = (
-        (RequestIsList & IsAuthenticated) |
-        (UserProfileEditPermission),
+        IsAuthenticated & (
+            RequestIsList | UserProfileEditPermission
+        ),
     )
 
     def get_queryset(self):
         return UserPhone.objects.filter(user_profile__user=self.request.user)
 
-    def create(request, *args, **kwargs):
-        profile = UserProfile.objects.get(
-            uu_id=kwargs['user_profile_uu_id'])
-        data = request.request.data
-        serializer = request.serializer_class(data=data)
-        if serializer.is_valid():
-            phone = request.request.data['phone']
-            obj = UserPhone.objects.create(
-                phone=phone, user_profile=profile)
-            response_data = {
-                'phone': obj.phone,
-                # 'uu_id': obj.serializable_value('uu_id'),
-            }
-            response_serializer = request.serializer_class(data=response_data)
-            if response_serializer.is_valid():
-                return Response(response_serializer.data,
-                                status=status.HTTP_201_CREATED)
-        return Response(response_serializer.errors,
-                        status=status.HTTP_400_BAD_REQUEST)
-        # return super(UserPhoneList, request).create(*args, **kwargs)
+    def perform_create(self, serializer, **kwargs):
+        profile = UserProfile.objects.get(user=self.request.user)
+        serializer.save(user_profile=profile)
 
 
 class UserPhoneDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = UserPhoneSerializer
+    permission_classes = (IsAuthenticated,)
 
     def get_object(self):
         return get_object_or_404(
