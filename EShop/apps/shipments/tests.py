@@ -32,12 +32,12 @@ class shipmentsTest(TestCase):
 
     def test_shipments_retrieve(self):
         uuid = self.shipment_1.uuid
-        response = self.sh.get('/shipments/{}/'.format(uuid))
+        response = self.sh.get('/shipments/{}'.format(uuid))
         self.assertEqual(response.status_code, 200)
 
     def test_cart_retrieve_negative(self):
         uuid = "1234"  #invalid uuid
-        response = self.sh.get('/shipments/{}/'.format(uuid))
+        response = self.sh.get('/shipments/{}'.format(uuid))
         self.assertEqual(response.status_code, 404)
 """
     def test_shipment_list_paged(self):
