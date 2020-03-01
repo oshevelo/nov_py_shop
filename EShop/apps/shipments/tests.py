@@ -35,15 +35,32 @@ class shipmentsTest(TestCase):
         response = self.sh.get('/shipments/{}'.format(uuid))
         self.assertEqual(response.status_code, 200)
 
-    def test_cart_retrieve_negative(self):
+    def test_shipment_retrieve_negative(self):
         uuid = "1234"  #invalid uuid
         response = self.sh.get('/shipments/{}'.format(uuid))
         self.assertEqual(response.status_code, 404)
-"""
+
+    def test_shipment_destroy(self):
+        uuid = self.shipment_1.uuid
+        response = self.sh.delete('/shipments/{}'.format(uuid))
+        self.assertEqual(response.status_code, 204)
+        updated_response = self.sh.delete('/shipments/{}/'.format(uuid))
+        self.assertEqual(updated_response.status_code, 404)
+
     def test_shipment_list_paged(self):
         response = self.sh.get('/shipments/?limit=2')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.json()['results']), 1)
+    
+    def test_shipment_destroy(self):
+        uuid = self.shipment_1.uuid
+        response = self.sh.delete('/shipments/{}'.format(uuid))
+        self.assertEqual(response.status_code, 204)
+        updated_response = self.sh.delete('/shipments/{}'.format(uuid))
+        self.assertEqual(updated_response.status_code, 404)
+
+
+"""
 
     def test_Shipment_list_limit_offset(self):
         response = self.sh.get('/shipments/?limit=2&offset=1')
@@ -51,12 +68,6 @@ class shipmentsTest(TestCase):
         first_result = response.json()['results'][0]
         self.assertEqual(first_result['user'], self.user_1.pk)
 
-    
-
-    def test_cart_retrieve_negative(self):
-        uuid = "1234"  #invalid uuid
-        response = self.sh.get(f'/shipments/{uuid}/')
-        self.assertEqual(response.status_code, 404)
 
     def test_shipment_update(self):
         uuid = self.shipment_1.uuid
