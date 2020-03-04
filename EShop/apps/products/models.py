@@ -1,5 +1,5 @@
 from django.db import models
-
+from apps.catalogue.models import Category
 
 class Product(models.Model):
     name = models.CharField(max_length=128, blank=False)
@@ -15,7 +15,7 @@ class Product(models.Model):
 
     image = models.ImageField(upload_to='images/', blank=True, null=True)
 
-    # category = models.ForeignKey(Category)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='products', null=True)
 
     def __str__(self):
         return '{} {}'.format(self.id, self.name)

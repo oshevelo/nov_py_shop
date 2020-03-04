@@ -23,17 +23,30 @@ class OrderSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Order
-        fields = ['id',  'pub_id', 'user', 'accepting_time', 'completing_or_rejecting_time', 'status', 'comment', 'orderitems']
+        fields = ['id',  'pub_id', 'user', 'accepting_time', 'completing_or_rejecting_time', 'status', 'is_paid', 'is_editable', 'max_orderitems', 'comment', 'orderitems']
 
 
 class OrderItemSerializer(serializers.ModelSerializer):
 
-    order=OrderBriefSerializer(read_only=True)
     product=ProductBriefSerializer(read_only=True)
 
     class Meta:
         model = OrderItem
         fields = ['id', 'pub_id',  'order', 'product', 'amount']
+        
+        
+class OrderCreateUpdateSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Order
+        fields = ['id',  'pub_id', 'accepting_time', 'completing_or_rejecting_time', 'status', 'is_paid', 'comment']
+        
+        
+class OrderItemCreateUpdateSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = OrderItem
+        fields = ['id', 'pub_id', 'product', 'amount']
         
         
 

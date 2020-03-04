@@ -27,8 +27,8 @@ class Shipment(models.Model):
         (DELIVERED,'Delivered'),
     ]
 
-    shipment_tracking_number = models.IntegerField()
-    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False)
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name = 'shipments')
     shipment_status = models.IntegerField(choices=DELIVERY_STATUS_CHOICES, default=1)
     shipment_type = models.CharField(
         max_length=50, choices=DELIVERY_CHOICES, default=HOME_DELIVERY
@@ -41,6 +41,6 @@ class Shipment(models.Model):
     destination_other_details = models.CharField(max_length=500, blank=True)
 
     def __str__(self):
-        return '{} - {}'.format(self.id, self.shipment_tracking_number)
+        return '{} - {}'.format(self.id, self.uuid)
 
 
