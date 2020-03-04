@@ -11,10 +11,12 @@ class ShipmentSerializer(serializers.ModelSerializer):
         model = Shipment
         fields = ['uuid', 'order', 'shipment_status', 'shipment_type', 'shipment_date', 'destination_city', 'destination_zip_code', 'destination_adress_street', 'destination_adress_building', 'destination_other_details'
                  ]
-        def perform_create(self, serializer):
-            order_data = json.pop['order']
-            json.update({'order': Order.objects.filter(id=order_data['id']).first()})
-            shipment = Shipment.objects.create(**json)
+        def create(self, validated_data):
+            print('in create')
+            order_data = validated_data.pop['order']
+            validated_data.update({'order': Order.objects.filter(id=order_data['id']).first()})
+            shipment = Shipment.objects.create(**validated_data)
+            shipment.save
             return shipment
     '''
         perform_create

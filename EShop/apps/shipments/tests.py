@@ -13,11 +13,20 @@ class shipmentsTest(TestCase):
         self.user_1=User.objects.create(username="Test", password="Test")
         self.order_1 = Order.objects.create(user=self.user_1, accepting_time=now())
         self.shipment_1=Shipment.objects.create(order=self.order_1,destination_city="Testville", destination_zip_code = 1111, destination_adress_street="Test str", destination_adress_building="1a")
-        print(self.shipment_1.uuid)
 
-    def test_shipment_create(self):   
+    def test_shipment_create(self):
+        print('order id is:{}'.format(self.order_1.id))   
         response=self.sh.post('/shipments/', 
-        {'order': self.order_1.id,
+        {'order': {
+                    'id': self.order_1.id,
+                    'pub_id': self.order_1.id,
+                    'user' : {'id': self.order_1.user.id
+                              }  ,
+                    'accepting_time': self.order_1.accepting_time,
+                    'status': self.order_1.status
+                    },
+         'shipment_status': 1,
+         'shipment_type': 'HOME',                
          'destination_city': 'test',
          'destination_zip_code': '11111',
          'destination_adress_street': 'test',
@@ -59,17 +68,6 @@ class shipmentsTest(TestCase):
         response = self.sh.patch('/shipments/{}'.format(uuid), 
                                  {'destination_city': new_destination_city})
         self.assertEqual(response.status_code, 200)
-
-
-"""
-
-    def test_shipment_update(self):
-        uuid = self.shipment_1.uuid
-        new_destination_city = "Testopolis"
-        response = self.sh.patch(f'/shipments/{uuid}/', {'destination_city': new_destination_city})
-        self.assertEqual(response.status_code, 200)
- 
-"""
 
     
         
