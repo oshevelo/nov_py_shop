@@ -41,6 +41,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    'social_django',
     'django_extensions',
 
     'rest_framework',
@@ -56,13 +58,11 @@ INSTALLED_APPS = [
     'apps.payments',
 ]
 
-'''
-REST_FRAMEWORK = {
-    'DEFAULT_PERMISSION_CLASSES': ('rest_framework.permissions.IsAdminUser',),
-
-    'PAGINATE_BY': 10
-}
-'''
+AUTHENTICATION_BACKENDS = [
+	'social_core.backends.github.GithubOAuth2',
+	'social_core.backends.google.GoogleOAuth2',
+	'django.contrib.auth.backends.ModelBackend',
+]
 
 REST_REGISTRATION = {
     'REGISTER_VERIFICATION_ENABLED': False,
@@ -78,6 +78,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'social_django.middleware.SocialAuthExceptionMiddleware',
 ]
 
 ROOT_URLCONF = 'EShop.urls'
@@ -156,5 +157,13 @@ USE_TZ = True
 STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+LOGIN_REDIRECT_URL = '/authenticate/'
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '314492367752-7k3oadusi25egsuuklm258e68l1qbt2k.apps.googleusercontent.com'
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '87B00aNaecwxGusfL3jexFuG'
+
+SOCIAL_AUTH_GITHUB_KEY = '525dd8d336599f6c3b38'
+SOCIAL_AUTH_GITHUB_SECRET = 'f05f0f81e972d068689abb7ed8bfdca93f683d65'
 
 from .local import *

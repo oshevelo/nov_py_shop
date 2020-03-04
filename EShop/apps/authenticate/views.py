@@ -22,6 +22,7 @@ def api_root(request, format=None):
         'rest_registration': reverse('rest_registration:register', request=request),
         'rest_framework_login': reverse('rest_framework:login', request=request),
         'user_profile': reverse('user_profile_list', request=request),
+        #'google_authentication': reverse('', request=request),
     })
 
 
