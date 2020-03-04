@@ -17,5 +17,5 @@ class ShipmentDetail(generics.RetrieveUpdateDestroyAPIView):
         serializer_class=ShipmentSerializer
 
         def get_object(self):
-            obj=get_object_or_404(Shipment, pk=self.kwargs.get('shipment_id'))
+            obj=get_object_or_404(Shipment, uuid=self.kwargs.get('shipment_uuid'))
             return obj
