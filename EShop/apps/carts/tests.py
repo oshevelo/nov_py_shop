@@ -12,18 +12,18 @@ class CartsAndCartItemsTestAPI(TestCase):
 
 
     def setUp(self):
-
+        
         self.user_1 = User(username='Li_1')
         self.user_1.set_password('password_1')
         self.user_1.save()
 
-        self.user_2 = User(username='Li_2')
-        self.user_2.set_password('password_2')
-        self.user_2.save()
+#        self.user_2 = User(username='Li_2')
+#        self.user_2.set_password('password_2')
+#        self.user_2.save()
 
-#        self.user_1 = User.objects.create(username='Li_1', password='password_1')
-#        self.user_2 = User.objects.create(username='Li-2', password='password_2')
-        
+#        self.user_1 = User.objects.create_user(username='Li_1', password='password_1')
+        self.user_2 = User.objects.create_user(username='Li_2', password='password_2')
+     
         product_1 = Product.objects.create(name='test_pr_1', description='descrip_of_pr_1')
         product_2 = Product.objects.create(name='test_pr_2', description='descrip_of_pr_2')
         product_3 = Product.objects.create(name='test_pr_3', description='descrip_of_pr_3')        
@@ -53,13 +53,27 @@ class CartsAndCartItemsTestAPI(TestCase):
         response_user_2 = self.c.get('/carts/')
         self.assertEqual(response_user_2.status_code, 200)
         self.c.logout()
- 
 
+
+    def test_cart_list_negative(self):        
+        self.c.login(username='Li_1', password='password_2')   # incorrect password
+        response_user_1 = self.c.get('/carts/')
+        self.assertEqual(response_user_1.status_code, 403)
+        
+ 
     def test_cart_retrieve(self):
         cart_uuid = self.cart_3.public_id
         self.c.login(username='Li_2', password='password_2')
         response = self.c.get(f'/carts/{cart_uuid}/')
         self.assertEqual(response.status_code, 200)
+        self.c.logout()
+
+
+    def test_cart_retrieve_negative(self):
+        cart_uuid = self.cart_item_3.public_id    # incorrect cart.public_id  
+        self.c.login(username='Li_2', password='password_2')
+        response = self.c.get(f'/carts/{cart_uuid}/')
+        self.assertEqual(response.status_code, 404)
         self.c.logout()
      
 
@@ -72,6 +86,24 @@ class CartsAndCartItemsTestAPI(TestCase):
         self.c.logout()
 
 
+    def test_cart_update(self):
+        cart_uuid = self.cart_3.public_id
+        self.c.login(username='Li_2', password='password_2')
+#        new_datetime = datetime.utcnow().isoformat() + 'Z'
+        new_datetime = datetime.utcnow().strftime('% Y-% m-% dT% H:% M:% S.% fZ')
+        response = self.c.patch(f'/carts/{cart_uuid}/', {'updated_at': new_datetime})
+        self.assertEqual(response.status_code, 200)
+        self.c.logout()
+
+
+    def test_cart_destroy(self):
+        cart_uuid = self.cart_2.public_id
+        self.c.login(username='Li_1', password='password_1')
+        response = self.c.delete(f'/carts/{cart_uuid}/')
+        self.assertEqual(response.status_code, 204)
+        updated_response = self.c.delete(f'/carts/{cart_uuid}/')
+        self.assertEqual(updated_response.status_code, 404)        
+
 # 'items': [{'id': 5, 'public_id': 'b5e7e7d8-31c6-44ef-abe2-bc5210505c6a', 'product': {'name': 'test_pr_2', 'price': 0.0}, 'quantity': 1, 'created_at': '2020-02-26T19:30:53.932136Z', 'updated_at': '2020-02-26T19:30:53.932149Z'}]    
 
 
@@ -81,6 +113,16 @@ class CartsAndCartItemsTestAPI(TestCase):
         self.c.login(username='Li_2', password='password_2')
         response = self.c.get(f'/carts/{cart_uuid}/item/')
 #        print(response.status_code, response.json())
+        self.assertEqual(response.status_code, 200) 
+        self.c.logout()
+
+
+    def test_cart_item_list_create(self):
+        cart_uuid = self.cart_1.public_id
+        self.c.login(username='Li_1', password='password_1')
+        response = self.c.post(f'/carts/{cart_uuid}/item/', {'cart': self.cart_1.pk, 'product': {'name': 'test_pr_2', 'price': 0.0}}, format='json')
+        print(response.json(), response.status_code)
+        self.assertEqual(response.status_code, 201)
         self.c.logout()
 
 
@@ -94,15 +136,34 @@ class CartsAndCartItemsTestAPI(TestCase):
         self.c.logout()
 
 
-    def test_cart_item_list_create(self):
-        cart_uuid = self.cart_1.public_id
+    def test_cart_item_retrieve_negative(self):
+        cart_uuid = self.cart_2.public_id
+        cart_item_uuid = self.cart_2.public_id    # incorrect cart_item.public_id 
         self.c.login(username='Li_1', password='password_1')
-        response = self.c.post(f'/carts/{cart_uuid}/item/', {'cart': self.cart_1.pk, 'product': {'name': 'test_pr_2', 'price': 0.0}}, format='json')
-        print(response.json(), response.status_code)
-        self.assertEqual(response.status_code, 201)
+        response = self.c.get(f'/carts/{cart_uuid}/item/{cart_item_uuid}/')
+        self.assertEqual(response.status_code, 404)
         self.c.logout()
 
 
+    def test_cart_item_update(self):
+        cart_uuid = self.cart_2.public_id
+        cart_item_uuid = self.cart_item_2.public_id
+        self.c.login(username='Li_1', password='password_1')
+#        new_datetime = datetime.utcnow().isoformat() + 'Z'
+        new_datetime = datetime.utcnow().strftime('% Y-% m-% dT% H:% M:% S.% fZ')
+        response = self.c.patch(f'/carts/{cart_uuid}/item/{cart_item_uuid}/', {'updated_at': new_datetime})
+        self.assertEqual(response.status_code, 200)
+        self.c.logout()
+
+  
+    def test_cart_item_destroy(self):
+        cart_uuid = self.cart_2.public_id
+        cart_item_uuid = self.cart_item_2.public_id
+        self.c.login(username='Li_1', password='password_1')
+        response = self.c.delete(f'/carts/{cart_uuid}/item/{cart_item_uuid}/')
+        self.assertEqual(response.status_code, 204)
+        updated_response = self.c.delete(f'/carts/item/{cart_item_uuid}/')
+        self.assertEqual(updated_response.status_code, 404)       
 
 
 
