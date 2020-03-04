@@ -16,7 +16,6 @@ class ShipmentSerializer(serializers.ModelSerializer):
             order_data = validated_data.pop['order']
             validated_data.update({'order': Order.objects.filter(id=order_data['id']).first()})
             shipment = Shipment.objects.create(**validated_data)
-            shipment.save
             return shipment
     '''
         perform_create

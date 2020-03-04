@@ -20,8 +20,7 @@ class shipmentsTest(TestCase):
         {'order': {
                     'id': self.order_1.id,
                     'pub_id': self.order_1.id,
-                    'user' : {'id': self.order_1.user.id
-                              }  ,
+                    'user' : self.order_1.user,
                     'accepting_time': self.order_1.accepting_time,
                     'status': self.order_1.status
                     },
