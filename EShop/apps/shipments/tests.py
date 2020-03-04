@@ -19,10 +19,6 @@ class shipmentsTest(TestCase):
         response=self.sh.post('/shipments/', 
         {'order': {
                     'id': self.order_1.id,
-                    'pub_id': self.order_1.id,
-                    'user' : self.order_1.user,
-                    'accepting_time': self.order_1.accepting_time,
-                    'status': self.order_1.status
                     },
          'shipment_status': 1,
          'shipment_type': 'HOME',                
