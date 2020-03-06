@@ -52,7 +52,7 @@ INSTALLED_APPS = [
     'apps.products',
     'apps.authenticate',
     'apps.carts',
-    'apps.users',
+    'apps.users.apps.UsersConfig',
     'apps.shipments',
     'apps.orders',
     'apps.catalogue',
