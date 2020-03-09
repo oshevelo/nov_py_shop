@@ -10,12 +10,8 @@ from apps.products.models import Product
 class OrderTest(TestCase):
     
     def setUp(self):
-        self.user1=User(username='user1')
-        self.user1.set_password("12345")
-        self.user1.save()
-        self.user2=User(username='user2')
-        self.user2.set_password("12345")
-        self.user2.save()
+        self.user1=User.objects.create_user(username='user1', password='12345')
+        self.user2=User.objects.create_user(username='user2', password='12345')
         
         self.product1=Product(name='product1', price=1000, scu='111', gtin='11111', is_available=True)
         self.product1.save()
@@ -39,21 +35,23 @@ class OrderTest(TestCase):
         self.c = APIClient()
        
         
-    def test_order_list(self):
+    def test_order_list_unauthorized(self):
         response = self.c.get('/orders/')
         self.assertEqual(response.status_code, 403)
+    
+    def test_order_list_user1(self):
         self.c.login(username='user1', password='12345')
         response= self.c.get('/orders/')
         self.assertEqual(response.status_code, 200)
         self.assertEqual((response.json()[0]['id'], response.json()[1]['id']), (self.order1.id, self.order3.id)) #orders for user1 - order1, order3
-        self.c.logout()
+        
+    def test_order_list_user2(self):
         self.c.login(username='user2', password='12345')
         response = self.c.get('/orders/')
         self.assertEqual(response.status_code, 200)
         self.assertEqual((response.json()[0]['id'], response.json()[1]['id']), (self.order2.id, self.order4.id)) #orders for user2 - order2, order4
-        self.c.logout()
         
-    def test_order_detail(self):
+    def test_order_detail_success(self):
         self.c.login(username='user1', password='12345')
         response = self.c.get(f'/orders/{self.order1.pub_id}')
         self.assertEqual(response.status_code, 200)
@@ -86,24 +84,24 @@ class OrderTest(TestCase):
                                     ]
                                     }
         self.assertEqual(response.json(), json_expected)
-        self.c.logout()
+        
+    def test_order_detail_fail(self):
         self.c.login(username='user2', password='12345')
         response = self.c.get(f'/orders/{self.order1.pub_id}')
         self.assertEqual(response.status_code, 404)      #user2 don't have permissions to see order1
-        self.c.logout()
         
-    def test_orderitem_list(self):
+    def test_orderitem_list_success(self):
         self.c.login(username='user1', password='12345')
         response = self.c.get(f'/orders/{self.order1.pub_id}/item/')
         self.assertEqual(response.status_code, 200)
         self.assertEqual((response.json()[0]['id'], response.json()[1]['id']), (self.order1_item1.id, self.order1_item2.id))
-        self.c.logout()
+        
+    def test_orderitem_list_fail(self):
         self.c.login(username='user2', password='12345')
         response = self.c.get(f'/orders/{self.order1.pub_id}/item/')
         self.assertEqual(response.status_code, 404)      #user2 don't have permissions
-        self.c.logout()
         
-    def test_orderitem_detail(self):
+    def test_orderitem_detail_success(self):
         self.c.login(username='user1', password='12345')
         response = self.c.get(f'/orders/{self.order1.pub_id}/item/{self.order1_item1.pub_id}/')
         self.assertEqual(response.status_code, 200)
@@ -115,11 +113,11 @@ class OrderTest(TestCase):
                                     'amount': 1
                                     }
         self.assertEqual(response.json(), json_expected)
-        self.c.logout()
+        
+    def test_orderitem_detail_fail(self):
         self.c.login(username='user2', password='12345')
         response = self.c.get(f'/orders/{self.order1.pub_id}/item/{self.order1_item1.pub_id}/')
         self.assertEqual(response.status_code, 404)       #user2 don't have permissions
-        self.c.logout()
        
     def test_order_create(self):
         self.c.login(username='user1', password='12345')
@@ -142,140 +140,127 @@ class OrderTest(TestCase):
                                     'orderitems': []
                                     }
         self.assertEqual(response.json(), json_expected)
-        new_order.delete()
-        self.c.logout() 
-        
-        
-    def test_order_delete(self):
+                
+    def test_order_delete_is_paid_fail(self):
         self.c.login(username='user1', password='12345')
-        new_order=Order(user=self.user1, accepting_time=timezone.now(), status='completed', is_paid='True')
-        new_order.save()
-        response = self.c.delete(f'/orders/{new_order.pub_id}')
-        self.assertEqual(response.status_code, 403)   #cannot delete is_paid and completed order
-        new_order.is_paid=False
-        new_order.save()
-        response = self.c.delete(f'/orders/{new_order.pub_id}')
-        self.assertEqual(response.status_code, 403)   #cannot delete completed order
-        new_order.is_paid=True
-        new_order.status='accepted'
-        new_order.save()
-        response = self.c.delete(f'/orders/{new_order.pub_id}')
+        self.order1.is_paid=True
+        self.order1.save()
+        response = self.c.delete(f'/orders/{self.order1.pub_id}')
         self.assertEqual(response.status_code, 403)   #cannot delete is_paid order
-        new_order.is_paid=False
-        new_order.save()
-        response = self.c.delete(f'/orders/{new_order.pub_id}')
-        self.assertEqual(response.status_code, 204)
-        response = self.c.get(f'/orders/{new_order.pub_id}')
-        self.assertEqual(response.status_code, 404)
-        self.c.logout() 
-    
-    def test_order_update(self):
-        self.c.login(username='user1', password='12345')
-        new_order=Order(user=self.user1, accepting_time=timezone.now())
-        new_order.save()
-        response = self.c.patch(f'/orders/{new_order.pub_id}',{'status':'cancelled'})
-        self.assertEqual(response.status_code, 200)
-        response = self.c.get(f'/orders/{new_order.pub_id}')
-        self.assertEqual(response.json()['status'], 'cancelled')
-        response = self.c.patch(f'/orders/{new_order.pub_id}',{'is_paid':True})
-        self.assertEqual(response.status_code, 403)     #cannot update cancelled order
-        new_order.status='accepted'
-        new_order.save()
-        response = self.c.patch(f'/orders/{new_order.pub_id}',{'is_paid':True})
-        self.assertEqual(response.status_code, 200) 
-        response = self.c.get(f'/orders/{new_order.pub_id}')
-        self.assertEqual(response.json()['is_paid'], True)
-        response = self.c.patch(f'/orders/{new_order.pub_id}',{'status':'cancelled'})
-        self.assertEqual(response.status_code, 403)      #cannot update is_paid order
-        new_order.delete()
-        self.c.logout() 
         
-    def test_orderitem_create(self):
+    def test_order_delete_completed_fail(self):
         self.c.login(username='user1', password='12345')
-        new_order=Order(user=self.user1, accepting_time=timezone.now())
-        new_order.save()
-        response = self.c.post(f'/orders/{new_order.pub_id}/item/',{'product':self.product1.id, 'amount':5}, format='json')
+        self.order1.status='completed'
+        self.order1.save()
+        response = self.c.delete(f'/orders/{self.order1.pub_id}')
+        self.assertEqual(response.status_code, 403)   #cannot delete completed order
+        
+    def test_order_delete_success(self):
+        self.c.login(username='user1', password='12345')
+        response = self.c.delete(f'/orders/{self.order1.pub_id}')
+        self.assertEqual(response.status_code, 204)
+        response = self.c.get(f'/orders/{self.order1.pub_id}')
+        self.assertEqual(response.status_code, 404)
+    
+    def test_order_update_success(self):
+        self.c.login(username='user1', password='12345')
+        response = self.c.patch(f'/orders/{self.order1.pub_id}',{'status':'cancelled'})
+        self.assertEqual(response.status_code, 200)
+        response = self.c.get(f'/orders/{self.order1.pub_id}')
+        self.assertEqual(response.json()['status'], 'cancelled')
+        
+    def test_order_update_is_paid_fail(self):
+        self.c.login(username='user1', password='12345')
+        self.order1.is_paid=True
+        self.order1.save()
+        response = self.c.patch(f'/orders/{self.order1.pub_id}',{'status':'cancelled'})
+        self.assertEqual(response.status_code, 403)      #cannot update is_paid order
+        
+    def test_order_update_completed_fail(self):
+        self.order1.status='completed'
+        self.order1.save()
+        response = self.c.patch(f'/orders/{self.order1.pub_id}',{'status':'cancelled'})
+        self.assertEqual(response.status_code, 403)     #cannot update completed order                
+        
+    def test_orderitem_create_success(self):
+        self.c.login(username='user1', password='12345')
+        response = self.c.post(f'/orders/{self.order1.pub_id}/item/',{'product':self.product1.id, 'amount':5}, format='json')
         self.assertEqual(response.status_code, 201)
-        new_orderitem=OrderItem.objects.get(order=new_order)
-        response = self.c.get(f'/orders/{new_order.pub_id}/item/{new_orderitem.pub_id}/')
+        new_orderitem=OrderItem.objects.get(amount=5)
+        response = self.c.get(f'/orders/{self.order1.pub_id}/item/{new_orderitem.pub_id}/')
         self.assertEqual(response.status_code, 200)
         json_expected={
                                     'id': new_orderitem.id, 
                                     'pub_id': str(new_orderitem.pub_id), 
-                                    'order': new_order.id, 
+                                    'order': self.order1.id, 
                                     'product': {'name': 'product1', 'price': 1000.0}, 
                                     'amount': 5
                                     }
         self.assertEqual(response.json(), json_expected)
-        new_order.status='completed'
-        new_order.save()
-        response = self.c.post(f'/orders/{new_order.pub_id}/item/',{'product':self.product2.id, 'amount':2}, format='json')
+        
+    def test_orderitem_create_completed_fail(self):
+        self.c.login(username='user1', password='12345')
+        self.order1.status='completed'
+        self.order1.save()
+        response = self.c.post(f'/orders/{self.order1.pub_id}/item/',{'product':self.product1.id, 'amount':5}, format='json')
         self.assertEqual(response.status_code, 403)   # cannot add orderitem to completed order
-        new_order.is_paid=True
-        new_order.status='accepted'
-        new_order.save()
-        response = self.c.post(f'/orders/{new_order.pub_id}/item/',{'product':self.product2.id, 'amount':2}, format='json')
+        
+    def test_orderitem_create_is_paid_fail(self):
+        self.c.login(username='user1', password='12345')
+        self.order1.is_paid=True
+        self.order1.save()
+        response = self.c.post(f'/orders/{self.order1.pub_id}/item/',{'product':self.product1.id, 'amount':5}, format='json')
         self.assertEqual(response.status_code, 403)   # cannot add orderitem to is_paid order
-        new_order.is_paid=False
-        new_order.save()
-        response = self.c.post(f'/orders/{new_order.pub_id}/item/',{'product':self.product2.id, 'amount':2}, format='json')
-        self.assertEqual(response.status_code, 201)
-        response = self.c.post(f'/orders/{new_order.pub_id}/item/',{'product':self.product2.id, 'amount':3}, format='json')
-        self.assertEqual(response.status_code, 201)
-        response = self.c.post(f'/orders/{new_order.pub_id}/item/',{'product':self.product2.id, 'amount':4}, format='json')
-        self.assertEqual(response.status_code, 201)
-        response = self.c.post(f'/orders/{new_order.pub_id}/item/',{'product':self.product2.id, 'amount':5}, format='json')
-        self.assertEqual(response.status_code, 201)
-        response = self.c.post(f'/orders/{new_order.pub_id}/item/',{'product':self.product2.id, 'amount':6}, format='json')
-        self.assertEqual(response.status_code, 403)   # maximum orderitems - 5        
-        new_order.delete()
-        self.c.logout()
         
-    def test_orderitem_delete(self):
+    def test_orderitem_create_maximum(self):
         self.c.login(username='user1', password='12345')
-        new_order=Order(user=self.user1, accepting_time=timezone.now(), status='completed')
-        new_order.save()
-        new_orderitem=OrderItem(order=new_order, product=self.product1, amount=10)
-        new_orderitem.save()
-        response = self.c.delete(f'/orders/{new_order.pub_id}/item/{new_orderitem.pub_id}/')
+        response = self.c.post(f'/orders/{self.order1.pub_id}/item/',{'product':self.product2.id, 'amount':3}, format='json')
+        self.assertEqual(response.status_code, 201)
+        response = self.c.post(f'/orders/{self.order1.pub_id}/item/',{'product':self.product2.id, 'amount':4}, format='json')
+        self.assertEqual(response.status_code, 201)
+        response = self.c.post(f'/orders/{self.order1.pub_id}/item/',{'product':self.product2.id, 'amount':5}, format='json')
+        self.assertEqual(response.status_code, 201)
+        response = self.c.post(f'/orders/{self.order1.pub_id}/item/',{'product':self.product2.id, 'amount':6}, format='json')
+        self.assertEqual(response.status_code, 403)   # maximum orderitems - 5         
+        
+    def test_orderitem_delete_completed_fail(self):
+        self.c.login(username='user1', password='12345')
+        self.order1.status='completed'
+        self.order1.save()
+        response = self.c.delete(f'/orders/{self.order1.pub_id}/item/{self.order1_item1.pub_id}/')
         self.assertEqual(response.status_code, 403)    #order is completed
-        new_order.is_paid=True
-        new_order.status='accepted'
-        new_order.save()
-        response = self.c.delete(f'/orders/{new_order.pub_id}/item/{new_orderitem.pub_id}/')
+        
+    def test_orderitem_delete_is_paid_fail(self):
+        self.c.login(username='user1', password='12345')
+        self.order1.is_paid=True
+        self.order1.save()
+        response = self.c.delete(f'/orders/{self.order1.pub_id}/item/{self.order1_item1.pub_id}/')
         self.assertEqual(response.status_code, 403)    #order is_paid
-        new_order.is_paid=False
-        new_order.save()
-        response = self.c.delete(f'/orders/{new_order.pub_id}/item/{new_orderitem.pub_id}/')
-        self.assertEqual(response.status_code, 204)        
-        response = self.c.get(f'/orders/{new_order.pub_id}/item/{new_orderitem.pub_id}/')
+        
+    def test_orderitem_delete_success(self):
+        self.c.login(username='user1', password='12345')
+        response = self.c.delete(f'/orders/{self.order1.pub_id}/item/{self.order1_item1.pub_id}/')
+        self.assertEqual(response.status_code, 204)
+        response = self.c.get(f'/orders/{self.order1.pub_id}/item/{self.order1_item1.pub_id}/')
         self.assertEqual(response.status_code, 404)
-        new_order.delete()
-        self.c.logout()
-        
-    def test_orderitem_update(self):
+                      
+    def test_orderitem_update_completed_fail(self):
         self.c.login(username='user1', password='12345')
-        new_order=Order(user=self.user1, accepting_time=timezone.now(), status='completed')
-        new_order.save()
-        new_orderitem=OrderItem(order=new_order, product=self.product1, amount=10)
-        new_orderitem.save()
-        response = self.c.patch(f'/orders/{new_order.pub_id}/item/{new_orderitem.pub_id}/',{'amount':20})
+        self.order1.status='completed'
+        self.order1.save()
+        response = self.c.patch(f'/orders/{self.order1.pub_id}/item/{self.order1_item1.pub_id}/',{'amount':10})
         self.assertEqual(response.status_code, 403)    #order is completed
-        new_order.is_paid=True
-        new_order.status='accepted'
-        new_order.save()
-        response = self.c.patch(f'/orders/{new_order.pub_id}/item/{new_orderitem.pub_id}/',{'amount':20})
+        
+    def test_orderitem_update_is_paid_fail(self):
+        self.c.login(username='user1', password='12345')
+        self.order1.is_paid=True
+        self.order1.save()
+        response = self.c.patch(f'/orders/{self.order1.pub_id}/item/{self.order1_item1.pub_id}/',{'amount':10})
         self.assertEqual(response.status_code, 403)    #order is_paid
-        new_order.is_paid=False
-        new_order.save()
-        response = self.c.patch(f'/orders/{new_order.pub_id}/item/{new_orderitem.pub_id}/',{'amount':20})
-        self.assertEqual(response.status_code, 200)        
-        response = self.c.get(f'/orders/{new_order.pub_id}/item/{new_orderitem.pub_id}/')
-        self.assertEqual(response.json()['amount'], 20)
-        new_order.delete()
-        self.c.logout()
-
         
-            
-        
-        
+    def test_orderitem_update_success(self):
+        self.c.login(username='user1', password='12345')
+        response = self.c.patch(f'/orders/{self.order1.pub_id}/item/{self.order1_item1.pub_id}/',{'amount':10})
+        self.assertEqual(response.status_code, 200)
+        response = self.c.get(f'/orders/{self.order1.pub_id}/item/{self.order1_item1.pub_id}/')
+        self.assertEqual(response.json()['amount'], 10)
