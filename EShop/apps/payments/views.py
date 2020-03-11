@@ -6,6 +6,17 @@ from .serializers import PaymentSerializer
 from rest_framework.pagination import LimitOffsetPagination
 
 
+class PaymentSystemCallBack(generics.CreateAPIView):
+
+    def create(self):
+        self.request.data#JSON from portmone
+        new_log_entry=TransactionLog.objects.create(**{
+            'payment': Payment.objects.filter(order__pub_id=self.request.data['ShopOrderNumber']),
+            'data': self.request.data
+        })
+        new_log_entry.process()
+        return '200ok'
+
 class PaymentList(generics.ListCreateAPIView):
     serializer_class = PaymentSerializer
     queryset = Payment.objects.all()

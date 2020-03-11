@@ -28,7 +28,17 @@ class Payment(models.Model):
 
 class LogsTransaction(models.Model):
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=False)
+    #user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=False)
     payment = models.ForeignKey(Payment, on_delete=models.CASCADE, null=True, blank=False)
     status = models.CharField(max_length=100, choices=status, null=True, blank=False)
     data = JSONField(null=True, blank=False)
+
+    def process(self):
+        '''
+             VALIDATE json
+            self.payment.complited_date = now
+            self.order.status = 'payed'
+            self.order.save()
+            self.payment.save()
+            self.status = 'OK'
+        '''
