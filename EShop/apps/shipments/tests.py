@@ -9,7 +9,7 @@ import uuid
 class shipmentsTest(TestCase):
 
     def setUp(self):
-        self.sh=APIClient()
+        self.   sh=APIClient()
         self.user_1=User.objects.create(username="Test", password="Test")
         self.order_1 = Order.objects.create(user=self.user_1, accepting_time=now())
         self.shipment_1=Shipment.objects.create(order=self.order_1,destination_city="Testville", destination_zip_code = 1111, destination_adress_street="Test str", destination_adress_building="1a")
@@ -18,11 +18,8 @@ class shipmentsTest(TestCase):
         print('order id is:{}'.format(self.order_1.id))   
         response=self.sh.post('/shipments/', 
         {'order': {
-                    'id': self.order_1.id,
-                    'pub_id': self.order_1.id,
-                    'user' : self.order_1.user,
-                    'accepting_time': self.order_1.accepting_time,
-                    'status': self.order_1.status
+                    'id': 123321123321,#self.order_1.id,
+                    'pub_id': self.order_1.pub_id,
                     },
          'shipment_status': 1,
          'shipment_type': 'HOME',                

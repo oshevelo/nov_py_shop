@@ -11,6 +11,9 @@ class ShipmentList(generics.ListCreateAPIView):
     serializer_class = ShipmentSerializer
     pagination_class=LimitOffsetPagination
 
+    #def post(self, *args, **kwargs):
+        #1/0
+
 
 class ShipmentDetail(generics.RetrieveUpdateDestroyAPIView):
         

@@ -1,9 +1,14 @@
 from rest_framework import serializers
 from .models import Order, OrderItem
 from apps.products.serializers import ProductBriefSerializer
+from apps.users.serializers import UserBriefSerializer
 
 
 class OrderBriefSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField()
+    pub_id = serializers.CharField()
+    user = UserBriefSerializer(read_only=True)
+    accepting_time = serializers.DateTimeField(read_only=True)
 
     class Meta:
         model = Order
