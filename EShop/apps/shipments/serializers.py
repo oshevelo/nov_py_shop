@@ -15,12 +15,11 @@ class ShipmentSerializer(serializers.ModelSerializer):
                  ]
 
     def validate_order(self, value):
-        print(self.initial_data)
         order = Order.objects.filter(id=value['id']).first()
         if not order:
             raise serializers.ValidationError("bad order id")
-            if not order.is_editable:
-                raise serializers.ValidationError("order is not editable")
+        elif not order.is_editable:                   
+            raise serializers.ValidationError("no new shipment allowed for paid order")
         return value 
 
     def create(self, validated_data):

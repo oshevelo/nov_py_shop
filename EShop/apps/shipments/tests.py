@@ -9,13 +9,14 @@ import uuid
 class shipmentsTest(TestCase):
 
     def setUp(self):
-        self.   sh=APIClient()
+        self.APIclient=APIClient()
         self.user_1=User.objects.create(username="Test", password="Test")
         self.order_1 = Order.objects.create(user=self.user_1, accepting_time=now())
+        self.order_2 = Order.objects.create(user=self.user_1, accepting_time=now(), is_paid=True)
         self.shipment_1=Shipment.objects.create(order=self.order_1,destination_city="Testville", destination_zip_code = 1111, destination_adress_street="Test str", destination_adress_building="1a")
     
     def test_shipment_create(self):
-        response=self.sh.post('/shipments/', 
+        response=self.APIclient.post('/shipments/', 
         {'order': {
                     'id':self.order_1.id,
                     'pub_id': self.order_1.pub_id,
@@ -28,13 +29,11 @@ class shipmentsTest(TestCase):
          'destination_adress_building': '1t',
         }, format='json')
         self.assertEqual(response.status_code, 201)
-    """
-    def test_shipment_create_order_not_editable(self): 
-        response=self.sh.post('/shipments/', 
+    
+    def test_negative_shipment_create_order_not_editable(self): 
+        response=self.APIclient.post('/shipments/', 
         {'order': {
-                    'id': self.order_1.id,
-                    'pub_id': self.order_1.pub_id,
-                    #'is_paid': 'True',
+                    'id': self.order_2.id,
                     },
          'shipment_status': 1,
          'shipment_type': 'HOME',                
@@ -44,9 +43,9 @@ class shipmentsTest(TestCase):
          'destination_adress_building': '1t',
         }, format='json')
         self.assertEqual(response.status_code, 400)
-    """
+    
     def test_negative_shipment_create(self): 
-        response=self.sh.post('/shipments/', 
+        response=self.APIclient.post('/shipments/', 
         {'order': {
                     'id': 123321123321,#self.order_1.id,
                     'pub_id': self.order_1.pub_id,
@@ -61,36 +60,36 @@ class shipmentsTest(TestCase):
         self.assertEqual(response.status_code, 400)
 
     def test_shipment_list(self):
-        response = self.sh.get('/shipments/')
+        response = self.APIclient.get('/shipments/')
         self.assertEqual(response.status_code, 200)
 
     def test_shipment_retrieve(self):
         uuid = self.shipment_1.uuid
-        response = self.sh.get('/shipments/{}'.format(uuid))
+        response = self.APIclient.get('/shipments/{}'.format(uuid))
         self.assertEqual(response.status_code, 200)
 
     def test_shipment_retrieve_negative(self):
         uuid = "1234"  #invalid uuid
-        response = self.sh.get('/shipments/{}'.format(uuid))
+        response = self.APIclient.get('/shipments/{}'.format(uuid))
         self.assertEqual(response.status_code, 404)
 
     def test_shipment_list_paged(self):
-        response = self.sh.get('/shipments/?limit=2')
+        response = self.APIclient.get('/shipments/?limit=2')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.json()['results']), 1)
     
     def test_shipment_destroy(self):
         uuid = self.shipment_1.uuid
-        response = self.sh.delete('/shipments/{}'.format(uuid))
+        response = self.APIclient.delete('/shipments/{}'.format(uuid))
         self.assertEqual(response.status_code, 204)
-        updated_response = self.sh.delete('/shipments/{}'.format(uuid))
+        updated_response = self.APIclient.delete('/shipments/{}'.format(uuid))
         self.assertEqual(updated_response.status_code, 404)
  
 
     def test_shipment_update(self):
         uuid = self.shipment_1.uuid
         new_destination_city = "Testopolis"
-        response = self.sh.patch('/shipments/{}'.format(uuid), 
+        response = self.APIclient.patch('/shipments/{}'.format(uuid), 
                                  {'destination_city': new_destination_city})
         self.assertEqual(response.status_code, 200)
 
