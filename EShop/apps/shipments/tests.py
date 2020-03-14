@@ -13,9 +13,39 @@ class shipmentsTest(TestCase):
         self.user_1=User.objects.create(username="Test", password="Test")
         self.order_1 = Order.objects.create(user=self.user_1, accepting_time=now())
         self.shipment_1=Shipment.objects.create(order=self.order_1,destination_city="Testville", destination_zip_code = 1111, destination_adress_street="Test str", destination_adress_building="1a")
-
+    
     def test_shipment_create(self):
-        print('order id is:{}'.format(self.order_1.id))   
+        response=self.sh.post('/shipments/', 
+        {'order': {
+                    'id':self.order_1.id,
+                    'pub_id': self.order_1.pub_id,
+                    },
+         'shipment_status': 1,
+         'shipment_type': 'HOME',                
+         'destination_city': 'test',
+         'destination_zip_code': '11111',
+         'destination_adress_street': 'test',
+         'destination_adress_building': '1t',
+        }, format='json')
+        self.assertEqual(response.status_code, 201)
+    """
+    def test_shipment_create_order_not_editable(self): 
+        response=self.sh.post('/shipments/', 
+        {'order': {
+                    'id': self.order_1.id,
+                    'pub_id': self.order_1.pub_id,
+                    #'is_paid': 'True',
+                    },
+         'shipment_status': 1,
+         'shipment_type': 'HOME',                
+         'destination_city': 'test',
+         'destination_zip_code': '11111',
+         'destination_adress_street': 'test',
+         'destination_adress_building': '1t',
+        }, format='json')
+        self.assertEqual(response.status_code, 400)
+    """
+    def test_negative_shipment_create(self): 
         response=self.sh.post('/shipments/', 
         {'order': {
                     'id': 123321123321,#self.order_1.id,
@@ -28,8 +58,7 @@ class shipmentsTest(TestCase):
          'destination_adress_street': 'test',
          'destination_adress_building': '1t',
         }, format='json')
-        print(response.json())
-        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.status_code, 400)
 
     def test_shipment_list(self):
         response = self.sh.get('/shipments/')
@@ -64,6 +93,8 @@ class shipmentsTest(TestCase):
         response = self.sh.patch('/shipments/{}'.format(uuid), 
                                  {'destination_city': new_destination_city})
         self.assertEqual(response.status_code, 200)
+
+    
 
     
         
