@@ -20,6 +20,7 @@ class shipmentsTest(TestCase):
         {'order': {
                     'id':self.order_1.id,
                     'pub_id': self.order_1.pub_id,
+                    'user': self.user_1,
                     },
          'shipment_status': 1,
          'shipment_type': 'HOME',                
@@ -34,6 +35,7 @@ class shipmentsTest(TestCase):
         response=self.APIclient.post('/shipments/', 
         {'order': {
                     'id': self.order_2.id,
+                    'user': self.user_1,
                     },
          'shipment_status': 1,
          'shipment_type': 'HOME',                
@@ -47,8 +49,9 @@ class shipmentsTest(TestCase):
     def test_negative_shipment_create(self): 
         response=self.APIclient.post('/shipments/', 
         {'order': {
-                    'id': 123321123321,#self.order_1.id,
+                    'id': 123321123321,
                     'pub_id': self.order_1.pub_id,
+                    'user': self.user_1,
                     },
          'shipment_status': 1,
          'shipment_type': 'HOME',                
