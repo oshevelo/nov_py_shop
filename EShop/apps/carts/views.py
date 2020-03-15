@@ -1,16 +1,15 @@
-from django.shortcuts import get_object_or_404, redirect
-from django.urls import reverse
-from rest_framework import generics
+from django.shortcuts import get_object_or_404
+from rest_framework import generics, status
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.permissions import IsAuthenticated
 from .models import Cart, CartItem
 from .serializers import CartSerializer, CartItemSerializer, CartCreateUpdateSerializer, CartItemCreateUpdateSerializer
 
 from apps.orders.models import Order, OrderItem
-from apps.orders.serializers import OrderSerializer, OrderItemSerializer
+from apps.orders.serializers import OrderSerializer
 import datetime
 from django.utils import timezone
-
+from rest_framework.response import Response
 # Create your views here.
 
 
@@ -81,15 +80,36 @@ class CartItemDetail(generics.RetrieveUpdateDestroyAPIView):
         return CartItemSerializer
 
 
-class Checkout(generics.RetrieveUpdateDestroyAPIView):
+class Checkout(generics.CreateAPIView):
     serializer_class = OrderSerializer
     permission_classes = (IsAuthenticated,)
 
-    def get_object(self):
+    def create(self, request, *args, **kwargs):    
+        selected_cart = get_object_or_404(Cart, public_id=self.kwargs.get('cart_uuid'), user=self.request.user)
+        new_order = Order.objects.create(user=self.request.user, accepting_time=timezone.now())        
+        for item in selected_cart.items.all():
+            order_item = OrderItem.objects.create(order=new_order, product=item.product, amount=item.quantity)
+        serializer = OrderSerializer(new_order)
+        headers = {}
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+"""
+    def create(self, request, *args, **kwargs):   
         selected_cart = get_object_or_404(Cart, public_id=self.kwargs.get('cart_uuid'), user=self.request.user)
         new_order = Order.objects.create(user=self.request.user, accepting_time=timezone.now())
         for item in selected_cart.items.all():
             order_item = OrderItem.objects.create(order=new_order, product=item.product, amount=item.quantity)
-        return new_order 
-#        return redirect(reverse('orders:order_details', kwargs={'order_uuid': new_order.pub_id}))
+        new_order_serializer = OrderSerializer(new_order)
+#        request.data = new_order_serializer.data
+        serializer = self.get_serializer(data=new_order_serializer.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+"""    
+
+
+
+
 

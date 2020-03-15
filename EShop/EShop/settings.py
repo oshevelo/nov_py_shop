@@ -49,7 +49,7 @@ INSTALLED_APPS = [
     'apps.products',
     'apps.authenticate',
     'apps.carts',
-    'apps.users',
+    'apps.users.apps.UsersConfig',
     'apps.shipments',
     'apps.orders',
     'apps.catalogue',
@@ -172,6 +172,8 @@ REST_REGISTRATION = {
     'REGISTER_EMAIL_VERIFICATION_ENABLED': False,
     'RESET_PASSWORD_VERIFICATION_ENABLED': False,
 }
+
+MAXIMUM_ORDERITEMS=5
 
 from .local import *
 

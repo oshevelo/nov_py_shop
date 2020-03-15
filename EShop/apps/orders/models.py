@@ -2,6 +2,7 @@ import uuid
 from django.db import models
 from django.contrib.auth.models import User
 from apps.products.models import Product
+from django.conf import settings
 
 class Order(models.Model):
     
@@ -42,7 +43,7 @@ class Order(models.Model):
             
     @property
     def max_orderitems(self):
-        maximum_orderitems=5
+        maximum_orderitems=settings.MAXIMUM_ORDERITEMS
         if len(self.orderitems.all())<maximum_orderitems:
             return False
         else:

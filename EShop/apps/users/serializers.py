@@ -1,5 +1,13 @@
 from rest_framework import serializers
+from django.contrib.auth.models import User
 from apps.users.models import UserProfile, UserAddress, UserPhone
+
+
+class UserBriefSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = User
+        fields = ['id', 'email', 'username']
 
 
 class UserProfileBriefSerializer(serializers.ModelSerializer):

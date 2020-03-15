@@ -5,7 +5,7 @@ from apps.products.models import Product
 from django.contrib.auth.models import User
 from datetime import datetime 
 import uuid
-
+from django.utils import timezone
 
 
 class CartsAndCartItemsTestAPI(TestCase):
@@ -35,9 +35,19 @@ class CartsAndCartItemsTestAPI(TestCase):
         self.cart_item_1 = CartItem.objects.create(cart=self.cart_1, product=product_1)               
         self.cart_item_2 = CartItem.objects.create(cart=self.cart_2, product=product_2)
         self.cart_item_3 = CartItem.objects.create(cart=self.cart_3, product=product_3)
+        self.cart_item_4 = CartItem.objects.create(cart=self.cart_1, product=product_3, quantity=2)
 
         self.c = APIClient()
 
+
+    def test_checkout(self):
+        cart_uuid = self.cart_1.public_id
+        self.c.login(username='Li_1', password='password_1')
+        response = self.c.post(f'/carts/{cart_uuid}/item/checkout/')
+#        {'user': self.user_1.pk, 'accepting_time': timezone.now()}, format='json')
+        print(response.json(), response.status_code)
+        self.assertEqual(response.status_code, 201)
+        self.c.logout()
 
 
     def test_cart_list(self):
@@ -79,7 +89,16 @@ class CartsAndCartItemsTestAPI(TestCase):
 
     def test_cart_create(self):
         self.c.login(username='Li_1', password='password_1')
-        response = self.c.post('/carts/', {'user': self.user_1.pk, 'items': [{'product': {'name': 'test_pr_2', 'price': 0.0}}]}, format='json')
+        response = self.c.post('/carts/',
+                                    {
+                                        'user': self.user_1.pk, 
+                                        'items': [{
+                                            'product': {
+                                                'name': 'test_pr_2',
+                                                'price': 0.0
+                                             }
+                                        }]
+                                    }, format='json')
 #        print(response.json())
         self.assertEqual(response.status_code, 201)
         self.assertTrue(isinstance(uuid.UUID(response.json()['public_id']), uuid.UUID))
@@ -120,8 +139,15 @@ class CartsAndCartItemsTestAPI(TestCase):
     def test_cart_item_list_create(self):
         cart_uuid = self.cart_1.public_id
         self.c.login(username='Li_1', password='password_1')
-        response = self.c.post(f'/carts/{cart_uuid}/item/', {'cart': self.cart_1.pk, 'product': {'name': 'test_pr_2', 'price': 0.0}}, format='json')
-        print(response.json(), response.status_code)
+        response = self.c.post(f'/carts/{cart_uuid}/item/',
+                                                      {
+                                                          'cart': self.cart_1.pk,
+                                                          'product': {
+                                                              'name': 'test_pr_2',
+                                                              'price': 0.0
+                                                          }
+                                                      }, format='json')
+#        print(response.json(), response.status_code)
         self.assertEqual(response.status_code, 201)
         self.c.logout()
 
@@ -154,7 +180,7 @@ class CartsAndCartItemsTestAPI(TestCase):
         response = self.c.patch(f'/carts/{cart_uuid}/item/{cart_item_uuid}/', {'updated_at': new_datetime})
         self.assertEqual(response.status_code, 200)
         self.c.logout()
-
+ 
   
     def test_cart_item_destroy(self):
         cart_uuid = self.cart_2.public_id
