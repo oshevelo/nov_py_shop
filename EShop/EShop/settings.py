@@ -29,7 +29,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -41,8 +40,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
-    'social_django',
     'django_extensions',
 
     'rest_framework',
@@ -59,13 +56,13 @@ INSTALLED_APPS = [
     'mptt',
     'rest_framework_recursive',
     'apps.payments',
+    'apps.notifications',
 ]
 
-
 AUTHENTICATION_BACKENDS = [
-	'social_core.backends.github.GithubOAuth2',
-	'social_core.backends.google.GoogleOAuth2',
-	'django.contrib.auth.backends.ModelBackend',
+    'social_core.backends.github.GithubOAuth2',
+    'social_core.backends.google.GoogleOAuth2',
+    'django.contrib.auth.backends.ModelBackend',
 ]
 
 '''
@@ -75,8 +72,6 @@ REST_FRAMEWORK = {
     'PAGINATE_BY': 10
 }
 '''
-
-
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -109,10 +104,10 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'EShop.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
+'''
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
@@ -123,7 +118,7 @@ DATABASES = {
         'PORT': 5432,
     }
 }
-
+'''
 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
@@ -143,7 +138,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
 
@@ -157,7 +151,6 @@ USE_L10N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
@@ -165,7 +158,6 @@ USE_TZ = True
 STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-
 
 LOGIN_REDIRECT_URL = '/authenticate/'
 
@@ -182,3 +174,16 @@ REST_REGISTRATION = {
 }
 
 from .local import *
+
+DATABASES = db
+
+CELERY_BROKER_URL = 'redis://h:p9bda9be1d008bddba961152401c53e70137eb1f5d18af209b87e5d0bc04155f5@ec2-52-213-121-150.eu-west-1.compute.amazonaws.com:32299'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+
+EMAIL_HOST = 'mail.adm.tools'
+EMAIL_PORT = 465
+EMAIL_HOST_USER = username
+EMAIL_HOST_PASSWORD = password
+EMAIL_USE_TLS = False
+EMAIL_USE_SSL = True
