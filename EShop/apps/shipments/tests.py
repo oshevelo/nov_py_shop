@@ -14,6 +14,7 @@ class shipmentsTest(TestCase):
         self.order_1 = Order.objects.create(user=self.user_1, accepting_time=now())
         self.order_2 = Order.objects.create(user=self.user_1, accepting_time=now(), is_paid=True)
         self.shipment_1=Shipment.objects.create(order=self.order_1,destination_city="Testville", destination_zip_code = 1111, destination_adress_street="Test str", destination_adress_building="1a")
+
     
     def test_shipment_create(self):
         self.APIclient.login(username='Test', password='Test')
@@ -21,7 +22,6 @@ class shipmentsTest(TestCase):
         {'order': {
                     'id':self.order_1.id,
                     'pub_id': self.order_1.pub_id,
-                    #'user': self.user_1,
                     },
          'shipment_status': 1,
          'shipment_type': 'HOME',                
@@ -30,6 +30,30 @@ class shipmentsTest(TestCase):
          'destination_adress_street': 'test',
          'destination_adress_building': '1t',
         }, format='json')
+        response_json=response.json()
+        uuid=Shipment.objects.get(destination_city='test').uuid
+        expected={'uuid': str(uuid),
+                    'order': {
+                              'id':self.order_1.id,
+                              'pub_id': str(self.order_1.pub_id),
+                              'user': {
+                                       'id': self.user_1.id,
+                                       'email':'',
+                                       'username': 'Test'
+                                       },
+                              'accepting_time':self.order_1.accepting_time.strftime('%Y-%m-%dT%H:%M:%S.%fZ'),
+                              'status':self.order_1.status
+                              },
+         'shipment_status': 1,
+         'shipment_type': 'HOME',
+         'shipment_date': None,                
+         'destination_city': 'test',
+         'destination_zip_code': '11111',
+         'destination_adress_street': 'test',
+         'destination_adress_building': '1t',
+         'destination_other_details':''
+        }
+        self.assertEqual(response_json, expected)
         self.assertEqual(response.status_code, 201)
     
     def test_negative_shipment_create_order_not_editable(self): 
@@ -37,7 +61,6 @@ class shipmentsTest(TestCase):
         response=self.APIclient.post('/shipments/', 
         {'order': {
                     'id': self.order_2.id,
-                    #'user': self.user_1,
                     },
          'shipment_status': 1,
          'shipment_type': 'HOME',                
@@ -54,7 +77,6 @@ class shipmentsTest(TestCase):
         {'order': {
                     'id': 123321123321,
                     'pub_id': self.order_1.pub_id,
-                    #'user': self.user_1,
                     },
          'shipment_status': 1,
          'shipment_type': 'HOME',                
