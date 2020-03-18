@@ -39,8 +39,16 @@ class Shipment(models.Model):
     destination_adress_street = models.CharField(max_length=300)
     destination_adress_building = models.CharField(max_length=5)
     destination_other_details = models.CharField(max_length=500, blank=True)
+    #shipment_system_id = models.CharField(max_length=25) номер накладной из портмоне
+    #payment_done = True|false
 
     def __str__(self):
         return '{} - {}'.format(self.id, self.uuid)
 
-
+    def send_to_novapochta(self):
+        '''
+            1. connect to portmone api
+            2. save to log what is going to send
+            3. save novapochta reply
+            4. process_log()
+        '''
