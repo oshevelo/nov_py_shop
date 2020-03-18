@@ -7,13 +7,6 @@ from django.contrib.postgres.fields import JSONField
 
 # Create your models here.
 
-status = [
-    ['new', 'new'],
-    ['in process', 'in process'],
-    ['ready', 'ready']
-]
-
-
 class Payment(models.Model):
 
     id = models.AutoField(primary_key=True)
@@ -27,10 +20,24 @@ class Payment(models.Model):
         return 'user = {}, public_id = {}, complited_date = {}'.format(self.user, self.id, self.complited_date, self.pk)
 
 
+'''
+TransactionLog.objects.filter(status=TransactionLog.Status.in_process)
+log.status = TransactionLog.Status.ready
+log.save()
+'''
 class TransactionLog(models.Model):
+    class Status:
+        new = 'new'
+        in_process = 'in process'
+        ready = 'ready'
 
+    STATUS_CHOICES = (
+        (Status.new, "new"),
+        (Status.in_process, "in process"),
+        (Status.ready, "ready"),
+    )
     payment = models.ForeignKey(Payment, on_delete=models.CASCADE, null=True, blank=False)
-    status = models.CharField(max_length=100, choices=status, null=True, blank=False)
+    status = models.CharField(max_length=100, default=Status.new, choices=STATUS_CHOICES, null=True, blank=False)
     data = JSONField(null=True, blank=False)
 
     def process(self):
