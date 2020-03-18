@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Payment, LogsTransaction
+from .models import Payment, TransactionLog
 from apps.orders.serializers import OrderBriefSerializer
 
 
