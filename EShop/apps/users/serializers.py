@@ -6,6 +6,8 @@ from apps.carts.serializers import CartSerializer
 
 # Cannot import any serializer from apps.orders.serializers because of a circular import
 from apps.orders.models import Order
+
+
 class OrderBriefSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField()
     pub_id = serializers.CharField()
@@ -67,8 +69,27 @@ class UserProfileSerializer(serializers.ModelSerializer):
     phones = UserPhoneBriefSerializer(many=True, read_only=True)
     cart = CartSerializer(read_only=True)
     orders = OrderBriefSerializer(many=True, read_only=True)
+    avatar = serializers.ImageField(
+        allow_empty_file=True, use_url=True, read_only=True)
 
     class Meta:
         model = UserProfile
         fields = ('uu_id', 'first_name', 'surname',
-                  'patronymic', 'addresses', 'phones', 'cart', 'orders')
+                  'patronymic', 'avatar', 'addresses',
+                  'phones', 'cart', 'orders')
+
+
+class UserAvatarSerializer(serializers.Serializer):
+    avatar = serializers.ImageField(allow_empty_file=False)
+    x = serializers.IntegerField()
+    y = serializers.IntegerField()
+    size = serializers.IntegerField()
+
+
+class UserProfileUpdateSerializer(serializers.ModelSerializer):
+    avatar = UserAvatarSerializer(required=False, write_only=True)
+
+    class Meta:
+        model = UserProfile
+        fields = ('uu_id', 'first_name', 'surname',
+                  'patronymic', 'avatar')

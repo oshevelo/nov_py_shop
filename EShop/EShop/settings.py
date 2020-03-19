@@ -63,9 +63,9 @@ INSTALLED_APPS = [
 
 
 AUTHENTICATION_BACKENDS = [
-	'social_core.backends.github.GithubOAuth2',
-	'social_core.backends.google.GoogleOAuth2',
-	'django.contrib.auth.backends.ModelBackend',
+    'social_core.backends.github.GithubOAuth2',
+    'social_core.backends.google.GoogleOAuth2',
+    'django.contrib.auth.backends.ModelBackend',
 ]
 
 '''
@@ -75,7 +75,6 @@ REST_FRAMEWORK = {
     'PAGINATE_BY': 10
 }
 '''
-
 
 
 MIDDLEWARE = [
@@ -181,6 +180,13 @@ REST_REGISTRATION = {
     'RESET_PASSWORD_VERIFICATION_ENABLED': False,
 }
 
-MAXIMUM_ORDERITEMS=5
+MAXIMUM_ORDERITEMS = 5
+
+AVATAR_SIZE = 150
+AVATAR_PIL_FORMAT = 'JPEG'
+AVATAR_QUALITY = 80
+AVATAR_FILE_FORMAT = 'image/jpeg'
+AVATAR_FILENAME_EXTENSION = '.jpg'
+AVATAR_FILENAME = 'avatar'
 
 from .local import *

@@ -1,10 +1,19 @@
 from django.db import models
+from django.conf import settings
 from django.contrib.auth.models import User
 from phone_field import PhoneField
 import uuid
 
 
+def user_avatar_path(instance, _):
+    return 'images/avatars/user_{0}/{1}'.format(
+        instance.user.profile.uu_id,
+        settings.AVATAR_FILENAME + settings.AVATAR_FILENAME_EXTENSION
+    )
+
 # Create your models here.
+
+
 class UserProfile(models.Model):
     first_name = models.CharField(max_length=50)
     surname = models.CharField(max_length=50)
@@ -15,6 +24,8 @@ class UserProfile(models.Model):
         primary_key=True,
         related_name='profile',
     )
+    avatar = models.ImageField(
+        upload_to=user_avatar_path, blank=True, null=True)
     uu_id = models.UUIDField(default=uuid.uuid4, editable=False)
 
     def __str__(self):
