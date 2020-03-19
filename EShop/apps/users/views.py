@@ -49,10 +49,14 @@ class UserProfileDetail(generics.RetrieveUpdateDestroyAPIView):
             image = Image.open(serializer.validated_data['avatar']['avatar'])
             filename = serializer.validated_data['avatar']['avatar'].name
             origin_width, origin_height = image.size
-            left = serializer.validated_data['avatar']['x']
-            upper = serializer.validated_data['avatar']['y']
+            left = abs(serializer.validated_data['avatar']['x'])
+            upper = abs(serializer.validated_data['avatar']['y'])
+            if left > origin_width:
+                left = 0
+            if upper > origin_height:
+                upper = 0
             size = min(
-                serializer.validated_data['avatar']['size'],
+                abs(serializer.validated_data['avatar']['size']),
                 origin_width - left,
                 origin_height - upper,
             )
