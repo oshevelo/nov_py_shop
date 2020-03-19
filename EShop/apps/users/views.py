@@ -6,6 +6,9 @@ from rest_framework.response import Response
 from apps.users.models import UserProfile, UserAddress, UserPhone
 from apps.users.serializers import UserProfileSerializer, UserAddressSerializer, UserPhoneSerializer
 from apps.users.permissions import UserProfileEditPermission, RequestIsList
+from apps.carts.models import Cart
+from apps.orders.models import Order
+
 
 # Create your views here.
 
@@ -22,6 +25,14 @@ class UserProfileList(generics.ListAPIView):
 class UserProfileDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = UserProfileSerializer
     permission_classes = (IsAuthenticated,)
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        instance.cart = Cart.objects.get(user=request.user)
+        instance.orders = Order.objects.filter(user=request.user)
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
+
 
     def get_object(self):
         return get_object_or_404(

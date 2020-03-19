@@ -1,6 +1,19 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
 from apps.users.models import UserProfile, UserAddress, UserPhone
+from apps.carts.serializers import CartSerializer
+
+
+# Cannot import any serializer from apps.orders.serializers because of a circular import
+from apps.orders.models import Order
+class OrderBriefSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField()
+    pub_id = serializers.CharField()
+    accepting_time = serializers.DateTimeField(read_only=True)
+
+    class Meta:
+        model = Order
+        fields = ['id', 'pub_id', 'accepting_time', 'status']
 
 
 class UserBriefSerializer(serializers.ModelSerializer):
@@ -52,8 +65,10 @@ class UserAddressSerializer(serializers.ModelSerializer):
 class UserProfileSerializer(serializers.ModelSerializer):
     addresses = UserAddressBriefSerializer(many=True, read_only=True)
     phones = UserPhoneBriefSerializer(many=True, read_only=True)
+    cart = CartSerializer(read_only=True)
+    orders = OrderBriefSerializer(many=True, read_only=True)
 
     class Meta:
         model = UserProfile
         fields = ('uu_id', 'first_name', 'surname',
-                  'patronymic', 'addresses', 'phones')
+                  'patronymic', 'addresses', 'phones', 'cart', 'orders')
