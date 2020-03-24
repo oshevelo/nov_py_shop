@@ -59,6 +59,7 @@ INSTALLED_APPS = [
     'mptt',
     'rest_framework_recursive',
     'apps.payments',
+    'apps.stats',
 ]
 
 
