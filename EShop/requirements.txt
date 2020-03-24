@@ -12,3 +12,4 @@ django-mptt==0.11.0
 django-rest-registration==0.5.3
 django-extensions==2.2.8
 djangorestframework-recursive==0.1.2
+git+https://github.com/semolex/novaposhta-api-client
