@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import Order, OrderItem
+from apps.shipments.models import Shipment
 from apps.products.serializers import ProductBriefSerializer
 from apps.users.serializers import UserBriefSerializer
 
@@ -52,6 +53,15 @@ class OrderItemCreateUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = OrderItem
         fields = ['id', 'pub_id', 'product', 'amount']
+        
+        
+class ShipmentCreateSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = Shipment
+        fields = ['id', 'uuid', 'shipment_type', 'shipment_date', 
+                        'destination_city', 'destination_zip_code', 'destination_adress_street', 
+                        'destination_adress_building', 'destination_other_details']
         
         
 
