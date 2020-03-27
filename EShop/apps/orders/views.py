@@ -69,7 +69,7 @@ class OrderItemDetail(generics.RetrieveUpdateDestroyAPIView):
         
         
 class AttachShipment(generics.CreateAPIView):
-        permission_classes = [IsAuthenticated&ShipmentExists]
+        permission_classes = [IsAuthenticated&ShipmentExists&OrderEditPermission]
         serializer_class = AttachShipmentSerializer
         
         def perform_create(self, serializer):
