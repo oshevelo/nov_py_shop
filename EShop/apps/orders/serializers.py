@@ -55,7 +55,7 @@ class OrderItemCreateUpdateSerializer(serializers.ModelSerializer):
         fields = ['id', 'pub_id', 'product', 'amount']
         
         
-class ShipmentCreateSerializer(serializers.ModelSerializer):
+class AttachShipmentSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Shipment
