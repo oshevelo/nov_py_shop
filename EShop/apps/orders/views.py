@@ -2,7 +2,7 @@ from .models import Order, OrderItem
 from rest_framework import generics
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.permissions import IsAuthenticated
-from .serializers import OrderSerializer, OrderItemSerializer, OrderCreateUpdateSerializer, OrderItemCreateUpdateSerializer, ShipmentCreateSerializer
+from .serializers import OrderSerializer, OrderItemSerializer, OrderCreateUpdateSerializer, OrderItemCreateUpdateSerializer, AttachShipmentSerializer
 from django.shortcuts import get_object_or_404
 from .permissions import OrderEditPermission, AddOrderItemPermission, ReadOnlyMethod, ShipmentExists
 
@@ -68,9 +68,9 @@ class OrderItemDetail(generics.RetrieveUpdateDestroyAPIView):
         return obj
         
         
-class CreateShipment(generics.CreateAPIView):
-        permission_classes = [IsAuthenticated&ShipmentExists]
-        serializer_class = ShipmentCreateSerializer
+class AttachShipment(generics.CreateAPIView):
+        permission_classes = [IsAuthenticated&ShipmentExists&OrderEditPermission]
+        serializer_class = AttachShipmentSerializer
         
         def perform_create(self, serializer):
             selected_order=get_object_or_404(Order, pub_id=self.kwargs.get('order_uuid'), user=self.request.user)
