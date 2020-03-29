@@ -13,9 +13,6 @@ from apps.users.serializers import (
     UserProfileSerializer, UserAddressSerializer,
     UserPhoneSerializer, UserProfileUpdateSerializer)
 from apps.users.permissions import UserProfileEditPermission, RequestIsList
-from apps.carts.models import Cart
-from apps.orders.models import Order
-from apps.stats.models import Stat
 
 
 # Create your views here.
@@ -37,18 +34,6 @@ class UserProfileDetail(generics.RetrieveUpdateDestroyAPIView):
         if self.request.method in ('PUT', 'PATCH'):
             return UserProfileUpdateSerializer
         return UserProfileSerializer
-
-    def retrieve(self, request, *args, **kwargs):
-        instance = self.get_object()
-        instance.cart = Cart.objects.get(user=request.user)
-        instance.orders = Order.objects.filter(user=request.user)
-        instance.last_seen_products = (
-            Stat.objects
-            .filter(user=request.user, action='browse_product')
-            .order_by('-created')[:5]
-        )
-        serializer = self.get_serializer(instance)
-        return Response(serializer.data)
 
     def perform_update(self, serializer):
         if 'avatar' in serializer.validated_data:
