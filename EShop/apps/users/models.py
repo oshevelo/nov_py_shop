@@ -7,6 +7,7 @@ from django.conf import settings
 from apps.carts.models import Cart
 from apps.orders.models import Order
 from apps.stats.models import Stat
+from apps.products.models import Product
 
 
 def user_avatar_path(instance, _):
@@ -42,10 +43,12 @@ class UserProfile(models.Model):
 
     @property
     def last_seen_products(self):
-        return (Stat.objects
-                .filter(user=self.user, action='browse_product')
-                .order_by('-created')[:settings.LAST_SEEN_PRODUCTS_COUNT]
-                )
+        stats = (Stat.objects
+                 .filter(user=self.user, action='browse_product')
+                 .order_by('-created')[:settings.LAST_SEEN_PRODUCTS_COUNT]
+                 )
+        products_ids = [stat.additional_info['product_id'] for stat in stats]
+        return Product.objects.filter(id__in=products_ids)
 
     def __str__(self):
         return f'{self.pk}. {self.surname} {self.first_name}'
