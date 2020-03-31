@@ -60,20 +60,12 @@ class Shipment(models.Model):
                 
         
     class ShipmentTransactionLog(models.Model):
-        
-        class Status:
-            new='new'
-            sent='sent'
-
-        STATUS_CHOICES=(
-            (Status.new, 'new'),
-            (Status.sent, 'sent')
-        ) 
     
-    shipment=models.ForeignKey(Shipment, on_delete=models.CASCADE, null=True, blank=False)
-    status=models.CharField(max_length=50, default=Status.new, choices=STATUS_CHOICES, null=True, blank=False)
-    def process(self):
-        valid_data=self.request.data
+    shipment=models.ForeignKey(Shipment, on_delete=models.CASCADE, null=True, blank=False, related_name='shipment_reference')
+    request_time=models.DateTimeField(auto_add_now=True)    
+    request_payload=JSONField()
+    response_payload=JSONField()
+    is_error=models.Boolean()
         
 
     
