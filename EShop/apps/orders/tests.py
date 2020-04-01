@@ -5,6 +5,7 @@ from django.utils import timezone
 import datetime
 from .models import Order, OrderItem
 from apps.products.models import Product
+from apps.shipments.models import Shipment
 
 
 class OrderTest(TestCase):
@@ -264,3 +265,44 @@ class OrderTest(TestCase):
         self.assertEqual(response.status_code, 200)
         response = self.c.get(f'/orders/{self.order1.pub_id}/item/{self.order1_item1.pub_id}/')
         self.assertEqual(response.json()['amount'], 10)
+        
+    def test_attach_shipment_success(self):
+        self.c.login(username='user1', password='12345')
+        post_json={
+                            'shipment_type':'HOME',  
+                            'destination_city':'Kyiv',
+                            'destination_zip_code':'111',
+                            'destination_adress_street':'Peremohy',
+                            'destination_adress_building':'1a'
+                            }
+        response = self.c.post(f'/orders/{self.order1.pub_id}/attach_shipment', post_json,  format='json')
+        self.assertEqual(response.status_code, 201)
+        new_shipment=Shipment.objects.get(destination_city='Kyiv')
+        json_expected={
+                                    'id': new_shipment.id, 
+                                    'uuid': str(new_shipment.uuid), 
+                                    'shipment_type': 'HOME', 
+                                    'shipment_date': None, 
+                                    'destination_city': 'Kyiv', 
+                                    'destination_zip_code': 111, 
+                                    'destination_adress_street': 'Peremohy', 
+                                    'destination_adress_building': '1a', 
+                                    'destination_other_details': ''
+                                    }
+        self.assertEqual(response.json(), json_expected) 
+        response = self.c.post(f'/orders/{self.order1.pub_id}/attach_shipment', post_json,  format='json')
+        self.assertEqual(response.status_code, 403)   # shipment for order is already exists
+        
+    def test_attach_shipment_fail(self):
+        self.c.login(username='user1', password='12345')
+        self.order1.is_paid=True
+        self.order1.save()
+        post_json={
+                            'shipment_type':'HOME',  
+                            'destination_city':'Kyiv',
+                            'destination_zip_code':'111',
+                            'destination_adress_street':'Peremohy',
+                            'destination_adress_building':'1a'
+                            }
+        response = self.c.post(f'/orders/{self.order1.pub_id}/attach_shipment', post_json,  format='json')
+        self.assertEqual(response.status_code, 403)  # cannot attach shipment to paid order
