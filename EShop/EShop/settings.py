@@ -192,6 +192,7 @@ AVATAR_FILENAME = 'avatar'
 LAST_SEEN_PRODUCTS_COUNT = 5
 
 MAXIMUM_ORDERITEMS=5
+'''
 LOGGING = {
     'version': 1,
     'filters': {
@@ -213,4 +214,5 @@ LOGGING = {
         }
     }
 }
+'''
 from .local import *
