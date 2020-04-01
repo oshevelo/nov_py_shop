@@ -2,7 +2,7 @@ from rest_framework import serializers
 from django.contrib.auth.models import User
 from apps.users.models import UserProfile, UserAddress, UserPhone
 from apps.carts.serializers import CartSerializer
-from apps.stats.serializers import StatSerializer
+from apps.products.serializers import ProductSerializer
 
 # Cannot import any serializer from apps.orders.serializers because of a circular import
 from apps.orders.models import Order
@@ -71,7 +71,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
     orders = OrderBriefSerializer(many=True, read_only=True)
     avatar = serializers.ImageField(
         allow_empty_file=True, use_url=True, read_only=True)
-    last_seen_products = StatSerializer(many=True, read_only=True)
+    last_seen_products = ProductSerializer(many=True, read_only=True)
 
     class Meta:
         model = UserProfile
