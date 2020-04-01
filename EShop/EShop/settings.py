@@ -191,4 +191,26 @@ AVATAR_FILENAME_EXTENSION = '.jpg'
 AVATAR_FILENAME = 'avatar'
 LAST_SEEN_PRODUCTS_COUNT = 5
 
+MAXIMUM_ORDERITEMS=5
+LOGGING = {
+    'version': 1,
+    'filters': {
+        'require_debug_true': {
+            '()': 'django.utils.log.RequireDebugTrue',
+        }
+    },
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'filters': ['require_debug_true'],
+            'class': 'logging.StreamHandler',
+        }
+    },
+    'loggers': {
+        'django.db.backends': {
+            'level': 'DEBUG',
+            'handlers': ['console'],
+        }
+    }
+}
 from .local import *
