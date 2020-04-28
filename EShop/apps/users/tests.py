@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 import uuid
 from pprint import pprint
 
+
 class uuidTest(TestCase):
 
     def auto_uuid4_test(self, uu_id):
@@ -41,7 +42,7 @@ class ProfileTest(TestCase):
             username='test_user1', password='password1')
         self.test_user2 = User.objects.create_user(
             username='test_user2', password='password2')
-        
+
         self.profile1 = UserProfile.objects.get(
             user=self.test_user1)
         self.profile1.first_name = 'test1'
@@ -55,10 +56,14 @@ class ProfileTest(TestCase):
         self.profile2.patronymic = 'testovich2'
         self.profile2.save()
 
-        self.phone1 = UserPhone.objects.create(phone='1111', user_profile=self.profile1)
-        self.phone2 = UserPhone.objects.create(phone='2222', user_profile=self.profile1)
-        self.phone3 = UserPhone.objects.create(phone='3333', user_profile=self.profile2)
-        self.phone4 = UserPhone.objects.create(phone='4444', user_profile=self.profile2)
+        self.phone1 = UserPhone.objects.create(
+            phone='1111', user_profile=self.profile1)
+        self.phone2 = UserPhone.objects.create(
+            phone='2222', user_profile=self.profile1)
+        self.phone3 = UserPhone.objects.create(
+            phone='3333', user_profile=self.profile2)
+        self.phone4 = UserPhone.objects.create(
+            phone='4444', user_profile=self.profile2)
 
         self.address1 = UserAddress.objects.create(
             address='first address',
@@ -69,7 +74,7 @@ class ProfileTest(TestCase):
         self.address3 = UserAddress.objects.create(
             address='third address',
             city='third city', user_profile=self.profile2)
-    
+
     def test_profile_create(self):
         new_user = User.objects.create_user(
             username='new_user',
@@ -81,29 +86,27 @@ class ProfileTest(TestCase):
             type(UserProfile.objects.all()[0])
         )
 
-
-    def test_profile_list_positive(self): 
+    def test_profile_list_positive(self):
         self.api_client.login(username='test_user1', password='password1')
         response = self.api_client.get('/users/')
         self.assertEqual(response.status_code, 200)
         t = uuidTest()
         processed_response = t.process_object_uuids(response.json())
-        expected = [{'addresses': 
-                        [{'address': 'first address',
-                          'city': 'first city'},
+        expected = [{'addresses':
+                     [{'address': 'first address',
+                       'city': 'first city'},
                          {'address': 'second address',
                           'city': 'second city'}],
-                    'avatar': None,
-                    'cart': None,
-                    'first_name': 'test1',
-                    'last_seen_products': [],
-                    'orders': [],
-                    'patronymic': 'testovich1',
-                    'phones': [{'phone': '1111'},
-                               {'phone': '2222'}],
-                    'surname': 'testov1'}]
+                     'avatar': None,
+                     'cart': None,
+                     'first_name': 'test1',
+                     'last_seen_products': [],
+                     'orders': [],
+                     'patronymic': 'testovich1',
+                     'phones': [{'phone': '1111'},
+                                {'phone': '2222'}],
+                     'surname': 'testov1'}]
         self.assertEqual(processed_response, expected)
-    
 
     def test_profile_list_negative(self):
         response = self.api_client.get('/users/')
@@ -111,7 +114,6 @@ class ProfileTest(TestCase):
         expected = {'detail': 'Authentication credentials were not provided.'}
         self.assertEqual(response.json(), expected)
 
-    
     def test_profile_retrieve_positive(self):
         self.api_client.login(username='test_user1', password='password1')
         request_uuid1 = self.profile1.uu_id
@@ -120,10 +122,10 @@ class ProfileTest(TestCase):
         t = uuidTest()
         processed_response = t.process_object_uuids(response.json())
         expected = {'addresses':
-                        [{'address': 'first address',
-                          'city': 'first city'},
-                         {'address': 'second address',
-                          'city': 'second city'}],
+                    [{'address': 'first address',
+                      'city': 'first city'},
+                     {'address': 'second address',
+                      'city': 'second city'}],
                     'avatar': None,
                     'cart': None,
                     'first_name': 'test1',
@@ -134,23 +136,20 @@ class ProfileTest(TestCase):
                                {'phone': '2222'}],
                     'surname': 'testov1'}
         self.assertEqual(processed_response, expected)
-        
 
-    
     def test_profile_retrieve_negative(self):
         request_uuid1 = self.profile1.uu_id
         response = self.api_client.get(f'/users/{str(request_uuid1)}/')
         self.assertEqual(response.status_code, 403)
         expected = {'detail': 'Authentication credentials were not provided.'}
         self.assertEqual(response.json(), expected)
-        
+
         self.api_client.login(username='test_user2', password='password2')
         response = self.api_client.get(f'/users/{str(request_uuid1)}/')
         self.assertEqual(response.status_code, 404)
         expected = {'detail': 'Not found.'}
         self.assertEqual(response.json(), expected)
-        
-    
+
     def test_profile_update_positive(self):
         self.api_client.login(username='test_user1', password='password1')
         request_uuid1 = self.profile1.uu_id
@@ -165,7 +164,6 @@ class ProfileTest(TestCase):
                     'patronymic': 'testovich1',
                     'surname': 'testov1'}
         self.assertEqual(processed_response, expected)
-
 
     def test_profile_update_negative(self):
         request_uuid1 = self.profile1.uu_id
@@ -186,13 +184,11 @@ class ProfileTest(TestCase):
         expected = {'detail': 'Not found.'}
         self.assertEqual(response.json(), expected)
 
-    
     def test_profile_destroy_postive(self):
         self.api_client.login(username='test_user1', password='password1')
         request_uuid1 = self.profile1.uu_id
         response = self.api_client.delete(f'/users/{str(request_uuid1)}/')
         self.assertEqual(response.status_code, 204)
-
 
     def test_profile_destroy_negative(self):
         request_uuid1 = self.profile1.uu_id
@@ -207,7 +203,6 @@ class ProfileTest(TestCase):
         expected = {'detail': 'Not found.'}
         self.assertEqual(response.json(), expected)
 
-
     def test_phone_create_positive(self):
         self.api_client.login(username='test_user1', password='password1')
         request_uuid1 = self.profile1.uu_id
@@ -221,7 +216,6 @@ class ProfileTest(TestCase):
         processed_response = t.process_object_uuids(response.json())
         expected = {'phone': '5555'}
         self.assertEqual(processed_response, expected)
-    
 
     def test_phone_create_negative(self):
         request_uuid1 = self.profile1.uu_id
@@ -233,7 +227,7 @@ class ProfileTest(TestCase):
         self.assertEqual(response.status_code, 403)
         expected = {'detail': 'Authentication credentials were not provided.'}
         self.assertEqual(response.json(), expected)
-        
+
         self.api_client.login(username='test_user2', password='password2')
         response = self.api_client.post(f'/users/{str(request_uuid1)}/phones/', {
             'user_profile': user_profile_pk1,
@@ -242,7 +236,6 @@ class ProfileTest(TestCase):
         self.assertEqual(response.status_code, 404)
         expected = {'detail': 'Not found.'}
         self.assertEqual(response.json(), expected)
-
 
     def test_phone_list_positive(self):
         self.api_client.login(username='test_user1', password='password1')
@@ -253,7 +246,6 @@ class ProfileTest(TestCase):
         processed_response = t.process_object_uuids(response.json())
         expected = [{'phone': '1111'}, {'phone': '2222'}]
         self.assertEqual(processed_response, expected)
-
 
     def test_phone_list_negative(self):
         request_uuid1 = self.profile1.uu_id
@@ -268,7 +260,6 @@ class ProfileTest(TestCase):
         expected = {'detail': 'Not found.'}
         self.assertEqual(response.json(), expected)
 
-
     def test_phone_retrieve_positive(self):
         self.api_client.login(username='test_user1', password='password1')
         profile_uuid = self.profile1.uu_id
@@ -279,7 +270,6 @@ class ProfileTest(TestCase):
         processed_response = t.process_object_uuids(response.json())
         expected = {'phone': '1111'}
         self.assertEqual(processed_response, expected)
-    
 
     def test_phone_retrieve_negative(self):
         profile_uuid = self.profile1.uu_id
@@ -295,7 +285,6 @@ class ProfileTest(TestCase):
         expected = {'detail': 'Not found.'}
         self.assertEqual(response.json(), expected)
 
-
     def test_phone_update_positive(self):
         self.api_client.login(username='test_user1', password='password1')
         profile_uuid = self.profile1.uu_id
@@ -309,7 +298,6 @@ class ProfileTest(TestCase):
         processed_response = t.process_object_uuids(response.json())
         expected = {'phone': '1111_upd'}
         self.assertEqual(processed_response, expected)
-    
 
     def test_phone_update_negative(self):
         profile_uuid = self.profile1.uu_id
@@ -331,7 +319,6 @@ class ProfileTest(TestCase):
         expected = {'detail': 'Not found.'}
         self.assertEqual(response.json(), expected)
 
-
     def test_phone_destroy_positive(self):
         self.api_client.login(username='test_user1', password='password1')
         profile_uuid = self.profile1.uu_id
@@ -339,7 +326,6 @@ class ProfileTest(TestCase):
         response = self.api_client.delete(
             f'/users/{str(profile_uuid)}/phones/{str(phone_uuid)}/')
         self.assertEqual(response.status_code, 204)
-
 
     def test_phone_destroy_negative(self):
         profile_uuid = self.profile1.uu_id
@@ -357,7 +343,6 @@ class ProfileTest(TestCase):
         expected = {'detail': 'Not found.'}
         self.assertEqual(response.json(), expected)
 
-
     def test_address_create_positive(self):
         self.api_client.login(username='test_user1', password='password1')
         request_uuid1 = self.profile1.uu_id
@@ -372,7 +357,6 @@ class ProfileTest(TestCase):
         processed_response = t.process_object_uuids(response.json())
         expected = {'city': 'fourth city', 'address': 'fourth address'}
         self.assertEqual(processed_response, expected)
-
 
     def test_address_create_negative(self):
         request_uuid1 = self.profile1.uu_id
@@ -396,7 +380,6 @@ class ProfileTest(TestCase):
         expected = {'detail': 'Not found.'}
         self.assertEqual(response.json(), expected)
 
-
     def test_address_list_positive(self):
         self.api_client.login(username='test_user1', password='password1')
         request_uuid1 = self.profile1.uu_id
@@ -409,7 +392,6 @@ class ProfileTest(TestCase):
                     {'address': 'second address',
                      'city': 'second city'}]
         self.assertEqual(processed_response, expected)
-
 
     def test_address_list_negative(self):
         request_uuid1 = self.profile1.uu_id
@@ -424,7 +406,6 @@ class ProfileTest(TestCase):
         expected = {'detail': 'Not found.'}
         self.assertEqual(response.json(), expected)
 
-
     def test_address_retrieve_positive(self):
         self.api_client.login(username='test_user1', password='password1')
         profile_uuid = self.profile1.uu_id
@@ -436,7 +417,6 @@ class ProfileTest(TestCase):
         expected = {'address': 'first address',
                     'city': 'first city'}
         self.assertEqual(processed_response, expected)
-
 
     def test_address_retrieve_negative(self):
         profile_uuid = self.profile1.uu_id
@@ -452,7 +432,6 @@ class ProfileTest(TestCase):
         expected = {'detail': 'Not found.'}
         self.assertEqual(response.json(), expected)
 
-
     def test_address_update_positive(self):
         self.api_client.login(username='test_user1', password='password1')
         profile_uuid = self.profile1.uu_id
@@ -467,7 +446,6 @@ class ProfileTest(TestCase):
         expected = {'address': 'first address',
                     'city': 'first city upd'}
         self.assertEqual(processed_response, expected)
-
 
     def test_address_update_negative(self):
         profile_uuid = self.profile1.uu_id
@@ -489,7 +467,6 @@ class ProfileTest(TestCase):
         expected = {'detail': 'Not found.'}
         self.assertEqual(response.json(), expected)
 
-    
     def test_address_destroy_positive(self):
         self.api_client.login(username='test_user1', password='password1')
         profile_uuid = self.profile1.uu_id
@@ -497,7 +474,6 @@ class ProfileTest(TestCase):
         response = self.api_client.delete(
             f'/users/{str(profile_uuid)}/addresses/{str(address_uuid)}/')
         self.assertEqual(response.status_code, 204)
-
 
     def test_address_destroy_negative(self):
         profile_uuid = self.profile1.uu_id
