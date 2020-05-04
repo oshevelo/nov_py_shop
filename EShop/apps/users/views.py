@@ -82,9 +82,7 @@ class UserAddressList(generics.ListCreateAPIView):
     serializer_class = UserAddressSerializer
     pagination_class = LimitOffsetPagination
     permission_classes = (
-        IsAuthenticated & (
-            RequestIsList | UserProfileEditPermission
-        ),
+        IsAuthenticated &  UserProfileEditPermission,
     )
 
     def get_queryset(self):
@@ -110,9 +108,7 @@ class UserPhoneList(generics.ListCreateAPIView):
     serializer_class = UserPhoneSerializer
     pagination_class = LimitOffsetPagination
     permission_classes = (
-        IsAuthenticated & (
-            RequestIsList | UserProfileEditPermission
-        ),
+        IsAuthenticated &  UserProfileEditPermission,
     )
 
     def get_queryset(self):
