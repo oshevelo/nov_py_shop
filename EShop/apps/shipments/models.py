@@ -1,6 +1,8 @@
 import uuid
 from django.db import models
 from apps.orders.models import Order
+from django.contrib.postgres.fields import JSONField
+
 
 # Create your models here.
 
@@ -39,6 +41,8 @@ class Shipment(models.Model):
     destination_adress_street = models.CharField(max_length=300)
     destination_adress_building = models.CharField(max_length=5)
     destination_other_details = models.CharField(max_length=500, blank=True)
+    shipment_tracking_number=models.IntegerField()
+    shipment_COD=models.Boolean()
     #shipment_system_id = models.CharField(max_length=25) номер накладной из портмоне
     #payment_done = True|false
 
@@ -52,3 +56,16 @@ class Shipment(models.Model):
             3. save novapochta reply
             4. process_log()
         '''
+        client=NovaPoshtaApi(api_key='')
+                
+        
+    class ShipmentTransactionLog(models.Model):
+    
+    shipment=models.ForeignKey(Shipment, on_delete=models.CASCADE, null=True, blank=False, related_name='shipment_reference')
+    request_time=models.DateTimeField(auto_add_now=True)    
+    request_payload=JSONField()
+    response_payload=JSONField()
+    is_error=models.Boolean()
+        
+
+    
